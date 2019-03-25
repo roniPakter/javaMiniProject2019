@@ -65,6 +65,7 @@ public class VectorTest {
 			assertEquals("Flags = 'ERROR! vector can't be: (0,0,0)'", e.getMessage());
 		}
 	}
+	//comment!
 
 	/**
 	 * Test method for {@link primitives.Vector#DotProduct(primitives.Vector)}.
