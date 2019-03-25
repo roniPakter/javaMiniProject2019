@@ -22,7 +22,7 @@ public class Ray {
 	
 	public Ray(Ray other) {
 		basePoint = new Point(other.getBasePoint());
-		directionVector = new Vector(other.getDirectionVector());
+		directionVector = (new Vector(other.getDirectionVector()).normalization());
 	}
 	
 	// ***************** Getters ******************** //

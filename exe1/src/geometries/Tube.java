@@ -8,7 +8,9 @@
  */
 package geometries;
 
+import primitives.Point;
 import primitives.Ray;
+import primitives.Vector;
 
 public class Tube extends RadialGeometries {
 	private Ray centerRay;
@@ -31,5 +33,14 @@ public class Tube extends RadialGeometries {
 	}
 
 	// ***************** Operations ******************** //
+	@Override
+	public Vector getNormal(Point p) {
+		Point p0 = centerRay.getBasePoint();
+		Vector z = p.subtract(p0);
+		double t = centerRay.getDirectionVector().DotProduct(z);
+		Vector projectionVector = centerRay.getDirectionVector().scale(t);
+		Vector w = projectionVector.add(new Vector(p0));
+		return z.substract(w);
+	}
 }
 

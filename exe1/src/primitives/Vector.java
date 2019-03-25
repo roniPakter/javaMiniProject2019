@@ -52,6 +52,10 @@ public class Vector {
 	}
 
 	// ***************** Operations ******************** //
+	public Vector add(Vector a) {
+		return new Vector(direction.add(a.getDirection()));
+	}
+	
 	public Vector substract(Vector a) {
 		return direction.subtract(a.direction);
 	}
