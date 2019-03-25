@@ -40,7 +40,7 @@ public class Tube extends RadialGeometries {
 		double t = centerRay.getDirectionVector().DotProduct(z);
 		Vector projectionVector = centerRay.getDirectionVector().scale(t);
 		Vector w = projectionVector.add(new Vector(p0));
-		return z.substract(w);
+		return (z.substract(w)).normalization();
 	}
 }
 

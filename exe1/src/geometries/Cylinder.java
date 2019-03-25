@@ -10,9 +10,13 @@
  */
 package geometries;
 
-import primitives.Ray;
+import java.nio.channels.SelectableChannel;
 
-public class Cylinder extends Tube {
+import primitives.Point;
+import primitives.Ray;
+import primitives.Vector;
+
+public class Cylinder extends Tube implements Geometry{
 	private double height;
 	
 	// ***************** Constructors ******************** //
@@ -33,5 +37,16 @@ public class Cylinder extends Tube {
 	}
 
 	// ***************** Operation ******************** //
+	@Override
+	public Vector getNormal(Point p) {
+		if (p.subtract(super.getCenterRay().getBasePoint()).DotProduct(
+				super.getCenterRay().getDirectionVector()) == 0)
+			return new Vector(super.getCenterRay().getDirectionVector());
+		else if (p.subtract((super.getCenterRay().getDirectionVector().scale(height)).getDirection())
+				.DotProduct(super.getCenterRay().getDirectionVector()) == 0)
+			return super.getCenterRay().getDirectionVector().scale(-1.0);
+		else return super.getNormal(p);
+					
+	}
 
 }
