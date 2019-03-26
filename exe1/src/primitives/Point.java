@@ -1,12 +1,10 @@
 /*
- * Aharon Packter
- * ID 201530508
- * Shlomo Perlov
- * ID 206914301
- * 19/03/2019
+ * Aharon Packter ID 201530508
+ * Shlomo Perlov ID 206914301
+ * 25/03/2019
  * 
  * Mini project in Software Engineering
- * Exercise 1
+ * Exercise 2
  */
 package primitives;
 
@@ -22,18 +20,34 @@ public class Point {
 	private Coordinate z;
 
 	// ***************** Constructors ********************** //
-	public Point(Point a) {
-		this.x = new Coordinate(a.getX());
-		this.y = new Coordinate(a.getY());
-		this.z = new Coordinate(a.getZ());
+	/**
+	 * copy Ctor
+	 * @param otherPoint
+	 */
+	public Point(Point otherPoint) {
+		this.x = new Coordinate(otherPoint.getX());
+		this.y = new Coordinate(otherPoint.getY());
+		this.z = new Coordinate(otherPoint.getZ());
 	}
 
+	/**
+	 * Ctor with three coordinates
+	 * @param _x Coordinate
+	 * @param _y Coordinate
+	 * @param _z Coordinate
+	 */
 	public Point(Coordinate _x, Coordinate _y, Coordinate _z) {
 		x = new Coordinate(_x);
 		y = new Coordinate(_y);
 		z = new Coordinate(_z);
 	}
 
+	/**
+	 * Ctor with double values
+	 * @param _x Value
+	 * @param _y Value
+	 * @param _z Value
+	 */
 	public Point(double _x, double _y, double _z) {
 		x = new Coordinate(_x);
 		y = new Coordinate(_y);
@@ -77,18 +91,37 @@ public class Point {
 	}
 
 	// ***************** Operations ******************** //
-	public Vector subtract(Point a) {
-		return new Vector(new Point(x.subtract(a.getX()), y.subtract(a.getY()), z.subtract(a.getZ())));
+	/**
+	 * subtract a point from the current point
+	 * @param otherPoint
+	 * @return new vector from the point to the other point
+	 */
+	public Vector subtract(Point otherPoint) {
+		//vector - vector = (x1 - x2, y1 - y2, z1 - z2)
+		return new Vector(new Point(x.subtract(otherPoint.getX()), y.subtract(otherPoint.getY()), z.subtract(otherPoint.getZ())));
+	}
+	
+	/**
+	 * add a point to another point
+	 * @param otherPoint
+	 * @return new Point added from the two
+	 */
+	public Point add(Vector vector) {
+		//point + vector = (x1 + x2, y1 + y2, z1 + z2)
+		Point otherPoint = vector.getDirection();
+		return new Point(x.add(otherPoint.getX()), y.add(otherPoint.getY()), z.add(otherPoint.getZ()));
 	}
 
-	public Point add(Point a) {
-		return new Point(x.add(a.getX()), y.add(a.getY()), z.add(a.getZ()));
-	}
-
-	public double distanceInSquare(Point a) {
-		return (x.subtract(a.getX()).get() * x.subtract(a.getX()).get()
-				+ y.subtract(a.getY()).get() * y.subtract(a.getY()).get()
-				+ z.subtract(a.getZ()).get() * z.subtract(a.getZ()).get());
+	/**
+	 * square distance from the 0,0,0 
+	 * @param other
+	 * @return the distance
+	 */
+	public double distanceInSquare(Point other) {
+		//
+		return (x.subtract(other.getX()).get() * x.subtract(other.getX()).get()
+				+ y.subtract(other.getY()).get() * y.subtract(other.getY()).get()
+				+ z.subtract(other.getZ()).get() * z.subtract(other.getZ()).get());
 	}
 
 	public double distance(Point a) {

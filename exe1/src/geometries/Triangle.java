@@ -1,12 +1,10 @@
 /*
- * Aharon Packter
- * ID 201530508
- * Shlomo Perlov
- * ID 206914301
- * 19/03/2019
+ * Aharon Packter ID 201530508
+ * Shlomo Perlov ID 206914301
+ * 25/03/2019
  * 
  * Mini project in Software Engineering
- * Exercise 1
+ * Exercise 2
  */
 package geometries;
 
@@ -14,18 +12,24 @@ import primitives.Point;
 import primitives.Vector;
 
 /**
- * Represents a triangle
+ * Represents a triangle in the space
  */
-public class Triangle extends Plane implements Geometry{
+public class Triangle extends Plane {
 	
 	private Point bVertex;
 	private Point cVertex;
 
 	// ***************** Constructors ******************** //
+	/**
+	 * Ctor with three points
+	 * @param a Vertex
+	 * @param b Vertex
+	 * @param c Vertex
+	 */
 	public Triangle(Point a, Point b, Point c) {
+		//one point will be the point to set the plane which includes the triangle
 		super(a, b, c);
-		if(b.subtract(a).norm() + c.subtract(b).norm() <= a.subtract(c).norm())
-			throw new IllegalArgumentException("ERROR! Invalid triangle");
+		//the rest are the b and c vertices
 		bVertex = new Point(b);
 		cVertex = new Point(c);
 	}
@@ -52,10 +56,5 @@ public class Triangle extends Plane implements Geometry{
 		return "Vertex A: " + super.getPoint() + "\nVertex B: " + bVertex + "\nVetex C: " + cVertex;
 	}
 
-	// ***************** Operations ******************** //
-	@Override
-	public Vector getNormal(Point point) {
-		return super.getNormal();
-	}
 }
 

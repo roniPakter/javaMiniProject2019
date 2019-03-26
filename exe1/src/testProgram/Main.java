@@ -1,12 +1,10 @@
 /*
- * Aharon Packter
- * ID 201530508
- * Shlomo Perlov
- * ID 206914301
- * 19/03/2019
+ * Aharon Packter ID 201530508
+ * Shlomo Perlov ID 206914301
+ * 25/03/2019
  * 
  * Mini project in Software Engineering
- * Exercise 1
+ * Exercise 2
  */
 package testProgram;
 import primitives.*;
@@ -17,6 +15,12 @@ public class Main {
 
 	public static void main(String[] args) {
 		try {
+			Cylinder cylinder3 = new Cylinder(1.0, 
+					new Ray(new Point(0,0,0), new Vector(0,0,1)),
+					3.0);
+			Point point = new Point(1,1,1);
+			cylinder3.getNormal(point);
+			
 			Coordinate xCoordinate = new Coordinate(1.5);
 			Coordinate yCoordinate = new Coordinate(2.1);
 			Coordinate zCoordinate = new Coordinate(1);
@@ -50,7 +54,6 @@ public class Main {
 			//--------------
 			System.out.println("Vector Subtraction:\n" + vector1.substract(vector2));
 			System.out.println("Point Subtraction:\n" + point1.subtract(point3));
-			System.out.println("Point add:\n" + point1.add(point3));
 			System.out.println("Scale multiplication:\n" + vector1.scale(6.0));
 			System.out.println("Cross product:\n" + vector1.crossProduct(vector2));
 			System.out.println("Normalization:\n" + vector2.normalization());

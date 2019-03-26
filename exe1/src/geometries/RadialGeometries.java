@@ -1,14 +1,13 @@
 /*
- * Aharon Packter
- * ID 201530508
- * Shlomo Perlov
- * ID 206914301
- * 19/03/2019
+ * Aharon Packter ID 201530508
+ * Shlomo Perlov ID 206914301
+ * 25/03/2019
  * 
  * Mini project in Software Engineering
- * Exercise 1
+ * Exercise 2
  */
 package geometries;
+import primitives.Util;
 
 /**
  * a super class for all redials, representing the data of the radius
@@ -18,8 +17,9 @@ abstract class RadialGeometries implements Geometry{
 
 	// ***************** Constructor ******************** //
 	public RadialGeometries(double radiusParm) {
-		if(radiusParm< 0)
-			throw new IllegalArgumentException("ERROR! Radius must be positive");
+		//check if the radius is zero or negative
+		if(radiusParm <= 0 || Util.isZero(radiusParm))
+			throw new IllegalArgumentException("ERROR! Radius must be a positive number");
 		radius = radiusParm;
 	}
 

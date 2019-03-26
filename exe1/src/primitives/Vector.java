@@ -1,17 +1,17 @@
 /*
- * Aharon Packter
- * ID 201530508
- * Shlomo Perlov
- * ID 206914301
- * 19/03/2019
+ * Aharon Packter ID 201530508
+ * Shlomo Perlov ID 206914301
+ * 25/03/2019
  * 
  * Mini project in Software Engineering
- * Exercise 1
+ * Exercise 2
  */
 package primitives;
 
 import java.util.IllegalFormatFlagsException;
-
+/**
+ * A class represents a vector in 3D space
+ */
 public class Vector {
 	private Point direction;
 
@@ -45,43 +45,75 @@ public class Vector {
 		Vector otherVector = (Vector) other;
 		return this.getDirection().equals(otherVector.getDirection());
 	}
-
+	
+	/**
+	 * returns the vector string: (X, Y, Z)
+	 */
 	@Override
 	public String toString() {
 		return direction.toString();
 	}
 
 	// ***************** Operations ******************** //
-	public Vector add(Vector a) {
-		return new Vector(direction.add(a.getDirection()));
+	/**
+	 * adding a vector to the vector 
+	 * @param added
+	 * @return a new vector (this + added)
+	 */
+	public Vector add(Vector added) {
+		return new Vector(direction.add(added));
 	}
 	
+	/**
+	 * Subtracting a vector from the vector
+	 * @return a new vector (this - added)
+	 */
 	public Vector substract(Vector a) {
 		return direction.subtract(a.direction);
 	}
-
-	public Vector scale(Double a) {
+	
+/**
+ * scalar multiplication on the vector
+ * @param scalar
+ * @return a new vector made of (this * scalar)
+ */
+	public Vector scale(double scalar) {
 		return new Vector(
-				a * direction.getX().get(), a * direction.getY().get(), a * direction.getZ().get());
+				scalar * direction.getX().get(), scalar * direction.getY().get(), scalar * direction.getZ().get());
 	}
-
-	public double DotProduct(Vector a) {
-		return (direction.getX().scale(a.direction.getX().get()).get()
-				+ direction.getY().scale(a.direction.getY().get()).get()
-				+ direction.getZ().scale(a.direction.getZ().get()).get());
+	
+/**
+ * dot product between two vectors
+ * @param producter
+ * @return a new vector made of (this * producter vector)
+ */
+	public double DotProduct(Vector producter) {
+		return (direction.getX().scale(producter.direction.getX().get()).get()
+				+ direction.getY().scale(producter.direction.getY().get()).get()
+				+ direction.getZ().scale(producter.direction.getZ().get()).get());
 	}
-
-	public Vector crossProduct(Vector a) {
+/**
+ * cross product between two vectors
+ * @param productor
+ * @return a new vector which is vertical to the two vectors
+ */
+	public Vector crossProduct(Vector productor) {
 		return new Vector(new Point(
-				direction.getY().get() * a.direction.getZ().get() - direction.getZ().get() * a.direction.getY().get(),
-				direction.getZ().get() * a.direction.getX().get() - direction.getX().get() * a.direction.getZ().get(),
-				direction.getX().get() * a.direction.getY().get() - direction.getY().get() * a.direction.getX().get()));
+				direction.getY().get() * productor.direction.getZ().get() - direction.getZ().get() * productor.direction.getY().get(),
+				direction.getZ().get() * productor.direction.getX().get() - direction.getX().get() * productor.direction.getZ().get(),
+				direction.getX().get() * productor.direction.getY().get() - direction.getY().get() * productor.direction.getX().get()));
 	}
-
+/**
+ * get the length of the vector
+ * @return a double value of the length
+ */
 	public double norm() {
 		return direction.distance(Point.ZERO);
 	}
-
+/**
+ * make a normalized vector in length of 1
+ * @return a new normalized vector
+ */
 	public Vector normalization() {
 		return scale(1 / norm());
 	}
