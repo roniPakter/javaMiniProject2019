@@ -15,7 +15,7 @@ import primitives.Vector;
 /**
  * test the Cylinder operations
  */
-public class cylinderTest {
+public class CylinderTest {
 	Cylinder cylinder = new Cylinder(1.0, 
 			new Ray(new Point(0,0,0), new Vector(0,0,1)),
 			3.0);

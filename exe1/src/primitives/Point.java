@@ -106,26 +106,27 @@ public class Point {
 	 * @param otherPoint
 	 * @return new Point added from the two
 	 */
-	public Point add(Vector vector) {
+	public Point addVector(Vector vector) {
 		//point + vector = (x1 + x2, y1 + y2, z1 + z2)
-		Point otherPoint = vector.getDirection();
-		return new Point(x.add(otherPoint.getX()), y.add(otherPoint.getY()), z.add(otherPoint.getZ()));
+		return new Point(x.add(vector.getVector().getX()), y.add(vector.getVector().getY()), z.add(vector.getVector().getZ()));
 	}
 
 	/**
-	 * square distance from the 0,0,0 
+	 * square distance from another point
 	 * @param other
 	 * @return the distance
 	 */
-	public double distanceInSquare(Point other) {
-		//
+	public double distanceSquared(Point other) {
+		//the squared distance is the squared length of the vector (thisPoint - otherPoint), which is:
+		//(x1-x2)^2 + (y1-y2)^2 + (z1-z2)^2
 		return (x.subtract(other.getX()).get() * x.subtract(other.getX()).get()
 				+ y.subtract(other.getY()).get() * y.subtract(other.getY()).get()
 				+ z.subtract(other.getZ()).get() * z.subtract(other.getZ()).get());
 	}
 
 	public double distance(Point a) {
-		double dist = Math.sqrt(distanceInSquare(a));
+		//the real distance is the square root of the squared distance
+		double dist = Math.sqrt(distanceSquared(a));
 		return isOne(dist) ? 1.0 : dist;
 	}
 }

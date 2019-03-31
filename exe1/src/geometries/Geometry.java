@@ -1,4 +1,6 @@
 package geometries;
+import java.util.List;
+
 import primitives.*;
 /**
  * interface for geometry shapes
@@ -10,4 +12,5 @@ public interface Geometry {
 	 * @return a new vector normalized and vertical to the given point
 	 */
 	Vector getNormal(Point point);
+	List<Point> findIntersections(Ray ray);
 }

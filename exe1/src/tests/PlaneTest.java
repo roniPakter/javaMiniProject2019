@@ -19,7 +19,7 @@ public class PlaneTest {
 	@Test
 	public void testGetNormalPoint() {
 		assertEquals(p1.getNormal().DotProduct(new Vector(p1.getPoint())),0, 1e-10);
-		assertEquals(p1.getNormal().norm(), 1, 1e-10);
+		assertEquals(p1.getNormal().length(), 1, 1e-10);
 				
 	}
 

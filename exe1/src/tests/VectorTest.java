@@ -94,8 +94,8 @@ public class VectorTest
 	 */
 	@Test
 	public void testDotProduct() {
-		assertEquals(0.0, vector1.DotProduct(new Vector(3, 0, -3)), 0.00000001);
-		assertEquals(18.0 ,vector1.DotProduct(vector2), 0.00000001);
+		assertEquals(0.0, vector1.DotProduct(new Vector(3, 0, -3)), 1e-10);
+		assertEquals(18.0 ,vector1.DotProduct(vector2), 1e-10);
 	}
 
 	/**
@@ -115,11 +115,11 @@ public class VectorTest
 	}
 
 	/**
-	 * Test method for {@link primitives.Vector#norm()}.
+	 * Test method for {@link primitives.Vector#length()}.
 	 */
 	@Test
 	public void testNorm() {
-		assertEquals(Math.sqrt(27), vector1.norm(), 0.00000001);
+		assertEquals(Math.sqrt(27), vector1.length(), 1e-10);
 		
 	}
 
@@ -128,7 +128,7 @@ public class VectorTest
 	 */
 	@Test
 	public void testNormalization() {
-		assertEquals(1, vector1.normalization().norm(), 0.00000001);
+		assertEquals(1, vector1.normalization().length(), 1e-10);
 	}
 
 }

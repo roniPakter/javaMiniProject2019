@@ -13,17 +13,17 @@ package primitives;
  */
 public class Ray {
 	private Point basePoint;
-	private Vector directionVector;
+	private Vector vector;
 	
 	// ***************** Constructors ******************** //
 	/**
 	 * Ctor with the base point and the vector for direction
-	 * @param parmPoint
-	 * @param parmDirection
+	 * @param point
+	 * @param direction
 	 */
-	public Ray(Point parmPoint, Vector parmDirection) {
-		basePoint = new Point(parmPoint);
-		directionVector = parmDirection.normalization();
+	public Ray(Point point, Vector direction) {
+		basePoint = new Point(point);
+		vector = direction.normalization();
 	}
 	
 	/**
@@ -32,7 +32,7 @@ public class Ray {
 	 */
 	public Ray(Ray other) {
 		basePoint = new Point(other.getBasePoint());
-		directionVector = (new Vector(other.getDirectionVector()).normalization());
+		vector = (new Vector(other.getVector()).normalization());
 	}
 	
 	// ***************** Getters ******************** //
@@ -40,23 +40,25 @@ public class Ray {
 		return basePoint;
 	}
 	
-	public Vector getDirectionVector() {
-		return directionVector;
+	public Vector getVector() {
+		return vector;
 	}
 	
 	// ***************** Administration ******************** //
 	@Override
 	public String toString() {
-		return "Ray base point: " + basePoint + "\nDirection: " + directionVector;
+		return "Ray base point: " + basePoint + "\nDirection: " + vector;
 	}
 	
 	@Override
 	public boolean equals(Object other) {
+		if (this == other)
+			return true;
 		if (other == null || !(other instanceof Ray))
 			return false;
 		Ray otherRay = (Ray)other;
 		return basePoint.equals(otherRay.getBasePoint()) &&
-				directionVector.equals(otherRay.getDirectionVector());		
+				vector.equals(otherRay.getVector());		
 	}
 
 	// ***************** Operations ******************** //

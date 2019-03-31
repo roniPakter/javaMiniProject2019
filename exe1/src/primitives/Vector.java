@@ -13,37 +13,41 @@ import java.util.IllegalFormatFlagsException;
  * A class represents a vector in 3D space
  */
 public class Vector {
-	private Point direction;
+	private Point vector;
 
 	// ***************** Constructors ******************** //
 	public Vector(Point a) {
+		//the zero vector is undefined and exception is thrown
 		if (a.getX().isZero() && a.getY().isZero() && a.getZ().isZero())
 			throw new IllegalFormatFlagsException("ERROR! vector can't be: (0,0,0)");
-		direction = new Point(a);
+		vector = new Point(a);
 	}
 
 	public Vector(double _x, double _y, double _z) {
+		//the zero vector is undefined and exception is thrown
 		if (Util.isZero(_x) && Util.isZero(_y) && Util.isZero(_z))
 			throw new IllegalFormatFlagsException("ERROR! vector can't be: (0,0,0)");
-		direction = new Point(_x, _y, _z);
+		vector = new Point(_x, _y, _z);
 	}
 
 	public Vector(Vector a) {
-		direction = new Point(a.direction);
+		vector = new Point(a.vector);
 	}
 
 	// ***************** Getters ******************** //
-	public Point getDirection() {
-		return direction;
+	public Point getVector() {
+		return vector;
 	}
 
 	// ***************** Administration ******************** //
 	@Override
 	public boolean equals(Object other) {
+		if (this == other)
+			return true;
 		if (other == null || !(other instanceof Vector))
 			return false;
 		Vector otherVector = (Vector) other;
-		return this.getDirection().equals(otherVector.getDirection());
+		return this.getVector().equals(otherVector.getVector());
 	}
 	
 	/**
@@ -51,7 +55,7 @@ public class Vector {
 	 */
 	@Override
 	public String toString() {
-		return direction.toString();
+		return vector.toString();
 	}
 
 	// ***************** Operations ******************** //
@@ -61,15 +65,15 @@ public class Vector {
 	 * @return a new vector (this + added)
 	 */
 	public Vector add(Vector added) {
-		return new Vector(direction.add(added));
+		return new Vector(vector.addVector(added));
 	}
 	
 	/**
 	 * Subtracting a vector from the vector
 	 * @return a new vector (this - added)
 	 */
-	public Vector substract(Vector a) {
-		return direction.subtract(a.direction);
+	public Vector substract(Vector other) {
+		return vector.subtract(other.vector);
 	}
 	
 /**
@@ -79,42 +83,42 @@ public class Vector {
  */
 	public Vector scale(double scalar) {
 		return new Vector(
-				scalar * direction.getX().get(), scalar * direction.getY().get(), scalar * direction.getZ().get());
+				scalar * vector.getX().get(), scalar * vector.getY().get(), scalar * vector.getZ().get());
 	}
 	
 /**
  * dot product between two vectors
- * @param producter
- * @return a new vector made of (this * producter vector)
+ * @param multiplicand
+ * @return a new vector made of (this * multiplicand vector)
  */
-	public double DotProduct(Vector producter) {
-		return (direction.getX().scale(producter.direction.getX().get()).get()
-				+ direction.getY().scale(producter.direction.getY().get()).get()
-				+ direction.getZ().scale(producter.direction.getZ().get()).get());
+	public double DotProduct(Vector multiplicand) {
+		return (vector.getX().scale(multiplicand.vector.getX().get()).get()
+				+ vector.getY().scale(multiplicand.vector.getY().get()).get()
+				+ vector.getZ().scale(multiplicand.vector.getZ().get()).get());
 	}
 /**
  * cross product between two vectors
- * @param productor
+ * @param multiplicand
  * @return a new vector which is vertical to the two vectors
  */
-	public Vector crossProduct(Vector productor) {
+	public Vector crossProduct(Vector multiplicand) {
 		return new Vector(new Point(
-				direction.getY().get() * productor.direction.getZ().get() - direction.getZ().get() * productor.direction.getY().get(),
-				direction.getZ().get() * productor.direction.getX().get() - direction.getX().get() * productor.direction.getZ().get(),
-				direction.getX().get() * productor.direction.getY().get() - direction.getY().get() * productor.direction.getX().get()));
+				vector.getY().get() * multiplicand.vector.getZ().get() - vector.getZ().get() * multiplicand.vector.getY().get(),
+				vector.getZ().get() * multiplicand.vector.getX().get() - vector.getX().get() * multiplicand.vector.getZ().get(),
+				vector.getX().get() * multiplicand.vector.getY().get() - vector.getY().get() * multiplicand.vector.getX().get()));
 	}
 /**
  * get the length of the vector
  * @return a double value of the length
  */
-	public double norm() {
-		return direction.distance(Point.ZERO);
+	public double length() {
+		return vector.distance(Point.ZERO);
 	}
 /**
  * make a normalized vector in length of 1
  * @return a new normalized vector
  */
 	public Vector normalization() {
-		return scale(1 / norm());
+		return scale(1 / length());
 	}
 }
