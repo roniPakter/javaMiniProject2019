@@ -5,7 +5,6 @@ package tests;
 
 import static org.junit.Assert.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
@@ -23,7 +22,7 @@ public class SphereTest {
 	Sphere sphere2 = new Sphere(2,  Point.ZERO);
 
 	/**
-	 * Test method for a normal vector finding {@link geometries.Sphere#getNormal(primitives.Point)}.
+	 * Test method for a normal vector finding in Sphere {@link geometries.Sphere#getNormal(primitives.Point)}.
 	 */
 	@Test
 	public void testGetNormal() {
@@ -31,7 +30,7 @@ public class SphereTest {
 	}
 
 	/**
-	 * Test method for a ray intersection finding {@link geometries.Sphere#findIntersections(primitives.Ray)}.
+	 * Test method for a ray intersection finding in Sphere {@link geometries.Sphere#findIntersections(primitives.Ray)}.
 	 */
 	@Test
 	public void testFindIntersections() {

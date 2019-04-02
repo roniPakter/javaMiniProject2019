@@ -9,7 +9,6 @@
 package geometries;
 
 import primitives.Point;
-import primitives.Vector;
 
 /**
  * Represents a triangle in the space

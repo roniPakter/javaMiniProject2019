@@ -2,7 +2,6 @@
  * 
  */
 package tests;
-import geometries.*;
 import static org.junit.Assert.*;
 
 import org.junit.Test;

@@ -29,7 +29,7 @@ public class VectorTest
 	@Test
 	public void testZeroVector() {
 		try {
-			Vector vector0 = new Vector(0,0,0);	
+			new Vector(0,0,0);	
 			fail();
 		}
 		catch (IllegalArgumentException e)
