@@ -21,6 +21,7 @@ public class Main {
 			Point point = new Point(1,1,1);
 			cylinder3.getNormal(point);
 			//only a comment for checking!
+			//let us try another time...
 			Coordinate xCoordinate = new Coordinate(1.5);
 			Coordinate yCoordinate = new Coordinate(2.1);
 			Coordinate zCoordinate = new Coordinate(1);
