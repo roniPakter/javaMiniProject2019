@@ -23,7 +23,7 @@ public class SphereTest {
 	Sphere sphere2 = new Sphere(2,  Point.ZERO);
 
 	/**
-	 * Test method for {@link geometries.Sphere#getNormal(primitives.Point)}.
+	 * Test method for a normal vector finding {@link geometries.Sphere#getNormal(primitives.Point)}.
 	 */
 	@Test
 	public void testGetNormal() {
@@ -31,7 +31,7 @@ public class SphereTest {
 	}
 
 	/**
-	 * Test method for {@link geometries.Sphere#findIntersections}.
+	 * Test method for a ray intersection finding {@link geometries.Sphere#findIntersections(primitives.Ray)}.
 	 */
 	@Test
 	public void testFindIntersections() {

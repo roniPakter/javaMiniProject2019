@@ -11,7 +11,6 @@ import primitives.Vector;
  * test the Plane operations
  */
 public class PlaneTest {
-
 	Plane p1 = new Plane(new Point(1,0,1),new Vector(0,1,0));
 	/**
 	 * Test method for {@link geometries.Plane#getNormal(primitives.Point)}.

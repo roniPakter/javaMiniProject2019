@@ -13,5 +13,4 @@ public interface Geometry {
 	 */
 	Vector getNormal(Point point);
 	List<Point> findIntersections(Ray ray);
-	//shlomi Perry
 }
