@@ -8,10 +8,13 @@
  */
 
 package geometries;
+import java.util.ArrayList;
 import java.util.List;
 
+import primitives.Util.*;
 import primitives.Point;
 import primitives.Ray;
+import primitives.Util;
 import primitives.Vector;
 
 /**
@@ -51,8 +54,29 @@ public class Sphere extends RadialGeometries {
 
 	@Override
 	public List<Point> findIntersections(Ray ray) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Point> intersectPoints = new ArrayList<Point>();
+		Point o = centerPoint;
+		Point p0 = ray.getBasePoint();
+		Vector v = ray.getVector();
+		double r = radius;
+		//the vector goes from the ray base to the sphere center
+		Vector u = o.subtract(p0);
+		//the length of the projection of u on the ray
+		double tm = v.DotProduct(u);
+		//the shortest distance from the sphere center to the ray
+		double d = Math.sqrt(u.squaredLength() - (tm * tm));
+		
+		//if the distance is 0 then the only intersection is the point of (tm * v)
+		if (Util.isZero(Util.usubtract(d, radius))) {
+			intersectPoints.add(p0.addVector(v.scale(tm)));
+			return intersectPoints;
+		}
+			
+		//if the distance is bigger then the radius - there are no intersections
+		if(Util.usubtract(d, radius) < 0)
+			return intersectPoints;
+		double th = Math.sqrt(a)
+		
 	}
 }
 
