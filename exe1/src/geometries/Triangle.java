@@ -8,7 +8,12 @@
  */
 package geometries;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import primitives.Point;
+import primitives.Ray;
+import primitives.Vector;
 
 /**
  * Represents a triangle in the space
@@ -54,6 +59,32 @@ public class Triangle extends Plane {
 	public String toString() {
 		return "Vertex A: " + super.getPoint() + "\nVertex B: " + bVertex + "\nVetex C: " + cVertex;
 	}
+
+	@Override 
+	public List<Point> findIntersections(Ray ray) {
+		List<Point>intersetPoints = super.findIntersections(ray); 
+		Point rayBasePoint = ray.getBasePoint();
+		
+		if(intersetPoints.size() == 0)
+			return new ArrayList<Point>();
+		
+		Vector v1 = point.subtract(rayBasePoint);
+		Vector v2 = bVertex.subtract(rayBasePoint);
+		Vector v3 = cVertex.subtract(rayBasePoint);
+		Vector N1 = v1.crossProduct(v2).normalization();
+		Vector N2 = v2.crossProduct(v3).normalization();
+		Vector N3 = v3.crossProduct(v1).normalization();
+		
+		Vector pPachotP0;
+		if(intersetPoints.get(0).equals(rayBasePoint)) 
+			return this.findIntersections(new Ray(rayBasePoint.addVector(ray.getVector().scale(-0.005)), ray.getVector()));
+
+		pPachotP0 = rayBasePoint.subtract(intersetPoints.get(0));
+		if(pPachotP0.DotProduct(N1) < 0 && pPachotP0.DotProduct(N2) < 0 && pPachotP0.DotProduct(N3) < 0 ||
+		   pPachotP0.DotProduct(N1) > 0 && pPachotP0.DotProduct(N2) > 0 && pPachotP0.DotProduct(N3) > 0	)
+			return intersetPoints;
+		return new ArrayList<Point>();
+	 }
 
 }
 

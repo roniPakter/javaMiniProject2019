@@ -19,8 +19,8 @@ import primitives.Vector;
  */
 public class TriangleTest {
 	Point vertexA = new Point(0,0,0);
-	Point vertexB = new Point(1,0,0);
-	Point vertexC = new Point(0,1,0);
+	Point vertexB = new Point(2,0,0);
+	Point vertexC = new Point(0,2,0);
 	Triangle triangle = new Triangle(vertexA, vertexB, vertexC);
 	Vector sideA = vertexA.subtract(vertexB);
 	Point pointInTriangle = new Point(0.5, 0.5, 0);
@@ -68,9 +68,9 @@ public class TriangleTest {
 		/**
 		 * a case for a not-orthogonal ray intersects the triangle
 		 */
-		Ray r4 = new Ray(new Point(1,1,1),new Vector(-3/4,-3/4,-1));
+		Ray r4 = new Ray(new Point(0,0,-0.5),new Vector(0.5,0.5,0.5));
 		actualInsecPoints = triangle.findIntersections(r4);
-		assertTrue(actualInsecPoints.size() == 1 && actualInsecPoints.contains(new Point(1/4,1/4,0)));
+		assertTrue(actualInsecPoints.size() == 1 && actualInsecPoints.contains(new Point(0.5,0.5,0)));
 		
 		/**
 		 * a case that the ray is parallel with the triangle

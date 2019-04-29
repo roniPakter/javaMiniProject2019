@@ -8,22 +8,27 @@
  */
 package geometries;
 
+import java.lang.annotation.Retention;
+import java.rmi.registry.Registry;
+import java.util.ArrayList;
 import java.util.List;
 
 import primitives.Point;
 import primitives.Ray;
+import primitives.Util;
 import primitives.Vector;
 
 /**
  * represents a plane in the space
  */
 public class Plane implements Geometry {
-	private Point point;
-	private Vector normalVector;
-	
+	protected Point point;
+	protected Vector normalVector;
+
 	// ***************** Constructors ******************** //
 	/**
 	 * cotr with a point and a normal vector
+	 * 
 	 * @param pointParm
 	 * @param normalParm
 	 */
@@ -31,9 +36,10 @@ public class Plane implements Geometry {
 		point = new Point(pointParm);
 		normalVector = (new Vector(normalParm)).normalization();
 	}
-	
+
 	/**
 	 * Ctor with three points
+	 * 
 	 * @param point1
 	 * @param point2
 	 * @param point3
@@ -43,14 +49,14 @@ public class Plane implements Geometry {
 		Vector b = point3.subtract(point1);
 		normalVector = a.crossProduct(b).normalization();
 		point = new Point(point1);
-		
+
 	}
 
 	// ***************** Getters ******************** //
 	public Point getPoint() {
 		return point;
 	}
-	
+
 	public Vector getNormal() {
 		return normalVector;
 	}
@@ -69,9 +75,29 @@ public class Plane implements Geometry {
 
 	@Override
 	public List<Point> findIntersections(Ray ray) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Point> list = new ArrayList<Point>();
+		
+		if (Util.isZero(normalVector.DotProduct(ray.getVector())))
+			return list;
+		
+		if(this.getPoint().equals(ray.getBasePoint())) {
+			list.add(ray.getBasePoint());
+			return list;
+		}
+					
+		double t= this.getPoint().subtract(ray.getBasePoint()).DotProduct(normalVector)
+				/ normalVector.DotProduct(ray.getVector());
+		if(t< 0)
+			return list;
+		if (Util.isZero(t)) {
+			list.add(ray.getBasePoint());
+			return list;
+		}
+			
+		Point p = new Point(ray.getBasePoint()
+			.addVector(ray.getVector().scale(t)));
+		
+		list.add(p);
+		return list;
 	}
-
 }
-

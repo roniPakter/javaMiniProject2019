@@ -9,6 +9,7 @@ import org.junit.Test;
 import geometries.*;
 import primitives.Point;
 import primitives.Ray;
+import primitives.Util;
 import primitives.Vector;
 /**
  * test the Plane operations
@@ -45,7 +46,8 @@ public class PlaneTest {
 		 * a case for an orthogonal ray starts above the plane upwards    
 		 * */
 		Ray r1 = new Ray(pointAbovePlane,planeNormal);
-		assertEquals(p1.findIntersections(r1).size(),0);
+		actualInsecPoints = p1.findIntersections(r1);
+		assertEquals(0 ,p1.findIntersections(r1).size());
 		
 		/**
 		 * a case for an orthogonal ray starts right in the plane upwards
@@ -66,7 +68,7 @@ public class PlaneTest {
 		 */
 		Ray r4 = new Ray(pointBelowPlane,planeNormal);
 		actualInsecPoints = p1.findIntersections(r4);
-		assertTrue(actualInsecPoints.size() == 1 && actualInsecPoints.contains(r4.getBasePoint()));
+		assertTrue(actualInsecPoints.size() == 1 && actualInsecPoints.contains(Point.ZERO));
 		
 		/**
 		 * a case that the ray is parallel with the plane

@@ -36,8 +36,9 @@ public class SphereTest {
 	public void testFindIntersections() {
 		Vector directionVector = new Vector(0,4,1);
 		//expected intersections
-		Point insec1 = new Point(0,-1.93202,0.51699);
-		Point insec2 = new Point(0,1.46144,1.36536);
+		
+		Point insec1 = new Point(0,-1.9320241296301,0.5169939675925);
+		Point insec2 = new Point(0,1.461435894336,1.365358973584);
 		 //a ray intersects the sphere twice
 		Point point = new Point(0,-4,0);
 		Ray ray = new Ray(point, directionVector);
@@ -52,6 +53,7 @@ public class SphereTest {
 		 * Check the opposite ray - no intersections
 		 */
 		Ray oppositeRay = new Ray(new Point(0,-4,0), directionVector.scale(-1));
+		actualInsecPoints = sphere2.findIntersections(oppositeRay);
 		assertTrue(sphere2.findIntersections(oppositeRay).isEmpty());
 		
 		/**
@@ -59,7 +61,8 @@ public class SphereTest {
 		 */
 		Ray fromWithinRay = new Ray(new Point(0,0,1), directionVector);
 		actualInsecPoints = sphere2.findIntersections(fromWithinRay);
-		assertTrue(actualInsecPoints.size() == 1 && actualInsecPoints.contains(insec2));
+		assertTrue(actualInsecPoints.size() == 1);
+		assertTrue(actualInsecPoints.contains(insec2));
 		
 		/**
 		 * Check no-intersection case - the ray in not in the direction of the sphere at all
@@ -72,7 +75,9 @@ public class SphereTest {
 		 */
 		Ray goesThroughRay = new Ray(insec1, directionVector);
 		actualInsecPoints = sphere2.findIntersections(goesThroughRay);
-		assertTrue(actualInsecPoints.size() == 2 && actualInsecPoints.contains(insec1) && actualInsecPoints.contains(insec2));
+		assertTrue(actualInsecPoints.size() == 2);
+		assertTrue( actualInsecPoints.contains(insec1));
+		assertTrue(actualInsecPoints.contains(insec2));
 		
 		/**
 		 * Check the case the ray starts on the sphere and goes outwards
@@ -107,7 +112,7 @@ public class SphereTest {
 		assertTrue(actualInsecPoints.size() == 1 && actualInsecPoints.contains(insec2));
 		
 		/**
-		 * the ray start on the sphere outwards ant is in the direction of the center
+		 * the ray start on the sphere outwards and is in the direction of the center
 		 */
 		throughCenteRay = new Ray(insec2, directionVector);
 		actualInsecPoints = sphere2.findIntersections(throughCenteRay);
@@ -149,5 +154,4 @@ public class SphereTest {
 		actualInsecPoints = sphere2.findIntersections(ray);
 		assertTrue(actualInsecPoints.isEmpty());
 	}
-
 }
