@@ -14,6 +14,9 @@ import java.util.IllegalFormatFlagsException;
  * A class represents a vector in 3D space
  */
 public class Vector {
+	public final static Vector Z_AXIS = new Vector(0, 0, 1);
+	public final static Vector X_AXIS= new Vector(1, 0, 0);
+	public final static Vector Y_AXIS= new Vector(0, 1, 0);
 	private Point vector;
 
 	// ***************** Constructors ******************** //

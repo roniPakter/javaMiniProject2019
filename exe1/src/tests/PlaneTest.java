@@ -9,7 +9,6 @@ import org.junit.Test;
 import geometries.*;
 import primitives.Point;
 import primitives.Ray;
-import primitives.Util;
 import primitives.Vector;
 /**
  * test the Plane operations

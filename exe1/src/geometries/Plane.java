@@ -8,8 +8,6 @@
  */
 package geometries;
 
-import java.lang.annotation.Retention;
-import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
 
