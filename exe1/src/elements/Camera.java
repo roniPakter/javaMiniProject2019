@@ -7,9 +7,6 @@ import primitives.Vector;
 
 /**
  * Represents a camera watching on a 3d scene
- * 
- * @author ronip
- *
  */
 public class Camera {
 	/** the position point of the camera */
@@ -32,7 +29,7 @@ public class Camera {
 	public Camera(Point position, Vector toDirection, Vector upDirection) {
 		double orthogonalCheck = toDirection.DotProduct(upDirection);
 		// in case the vector of up and to are not orthogonal - exception
-		if (orthogonalCheck != 0)
+		if (!Util.isZero(orthogonalCheck))
 			throw new IllegalArgumentException("vTo and vUp are not orthogonal");
 
 		p0 = new Point(position);
@@ -42,18 +39,22 @@ public class Camera {
 	}
 
 	// ***************** Getters ******************** //
+	/**returns the P0 point of the camera position*/
 	public Point getP0() {
 		return p0;
 	}
 
+	/**returns the vector of the forward direction*/
 	public Vector getToVector() {
 		return vTo;
 	}
 
+	/**returns the vector of the up direction*/
 	public Vector getUpVector() {
 		return vUp;
 	}
 
+	/**returns the vector of the right direction*/
 	public Vector getRightVector() {
 		return vRight;
 	}
