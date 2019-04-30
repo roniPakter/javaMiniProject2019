@@ -1,5 +1,6 @@
 package geometries;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import primitives.Point;
@@ -14,5 +15,6 @@ public interface Intersectable {
 	 * @param ray
 	 * @return a list of the intersection points
 	 */
+	public static final List<Point> EMPTY_LIST = new ArrayList<Point>();
 	List<Point> findIntersections(Ray ray);
 }

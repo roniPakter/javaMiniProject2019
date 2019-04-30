@@ -2,6 +2,7 @@ package elements;
 
 import primitives.Point;
 import primitives.Ray;
+import primitives.Util;
 import primitives.Vector;
 
 /**
@@ -71,7 +72,8 @@ public class Camera {
 
 	// ***************** Operations ******************** //
 	/**
-	 * 
+	 * given the details of the camera's current view plane (screen),
+	 * create a ray goes from the camera through the center of an asked pixel
 	 * @param nx the number of columns
 	 * @param ny the number of rows
 	 * @param i the place of the pixel in rows
@@ -79,21 +81,27 @@ public class Camera {
 	 * @param screenDistance 
 	 * @param screenWidth 
 	 * @param screenHeight
-	 * @return a Ray from the camera through the center of the pixel
+	 * @return a Ray from the camera through the center of the [i,j] pixel
 	 */
 	public Ray constructRayThroughPixel(int nx, int ny, int i, int j, double screenDistance, double screenWidth, double screenHeight) {
+		//Pc is the center point of the view plane: P0 + d*vTo
 		Point pc = p0.addVector(vTo.scale(screenDistance));
+		//Xi and Yj are the coefficients that would take us to the asked point from the Pc point
+		//Xi for moving in the X axis direction (right / left)
 		double xi = (j - (nx - 1) / 2d) * screenWidth / nx;
+		//Yj for moving in the Y axis direction (down / up) 
 		double yj = (i - (ny - 1) / 2d) * screenHeight / ny;
+		//in case the both coefficients are zero, the asked point is the Pc point
 		Point pij = pc;
-		if(xi != 0) 
+		if(!Util.isZero(xi)) 
 		{
 		pij = pij.addVector(vRight.scale(xi));
 		}
-		if(yj != 0)
+		if(!Util.isZero(yj))
 		{
 		pij = pij.addVector(vUp.scale(-yj));
 		}	
+		//the vector leads to the asked point is: Pij - P0
 		Vector vij = pij.subtract(p0);
 		return new Ray(p0,vij);
 	}

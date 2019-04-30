@@ -62,27 +62,31 @@ public class Triangle extends Plane {
 
 	@Override 
 	public List<Point> findIntersections(Ray ray) {
-		List<Point>intersetPoints = super.findIntersections(ray); 
+		List<Point>intersectPoints = super.findIntersections(ray); 
 		Point rayBasePoint = ray.getBasePoint();
 		
-		if(intersetPoints.size() == 0)
+		if(intersectPoints.size() == 0)
 			return new ArrayList<Point>();
 		
 		Vector v1 = point.subtract(rayBasePoint);
 		Vector v2 = bVertex.subtract(rayBasePoint);
 		Vector v3 = cVertex.subtract(rayBasePoint);
-		Vector N1 = v1.crossProduct(v2).normalization();
-		Vector N2 = v2.crossProduct(v3).normalization();
-		Vector N3 = v3.crossProduct(v1).normalization();
+		Vector n1 = v1.crossProduct(v2).normalization();
+		Vector n2 = v2.crossProduct(v3).normalization();
+		Vector n3 = v3.crossProduct(v1).normalization();
 		
-		Vector pPachotP0;
-		if(intersetPoints.get(0).equals(rayBasePoint)) 
+		Vector pMinusP0;
+		if(intersectPoints.get(0).equals(rayBasePoint)) 
 			return this.findIntersections(new Ray(rayBasePoint.addVector(ray.getVector().scale(-0.005)), ray.getVector()));
 
-		pPachotP0 = rayBasePoint.subtract(intersetPoints.get(0));
-		if(pPachotP0.DotProduct(N1) < 0 && pPachotP0.DotProduct(N2) < 0 && pPachotP0.DotProduct(N3) < 0 ||
-		   pPachotP0.DotProduct(N1) > 0 && pPachotP0.DotProduct(N2) > 0 && pPachotP0.DotProduct(N3) > 0	)
-			return intersetPoints;
+		pMinusP0 = rayBasePoint.subtract(intersectPoints.get(0));
+		double n1DotProductCheck = pMinusP0.DotProduct(n1);
+		double n2DotProductCheck = pMinusP0.DotProduct(n2);
+		double n3DotProductCheck = pMinusP0.DotProduct(n3);
+		
+		if(n1DotProductCheck < 0 && n2DotProductCheck < 0 && n3DotProductCheck < 0 ||
+			n1DotProductCheck > 0 && n2DotProductCheck > 0 && n3DotProductCheck > 0	)
+			return intersectPoints;
 		return new ArrayList<Point>();
 	 }
 

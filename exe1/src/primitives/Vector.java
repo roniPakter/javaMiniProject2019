@@ -15,8 +15,8 @@ import java.util.IllegalFormatFlagsException;
  */
 public class Vector {
 	public final static Vector Z_AXIS = new Vector(0, 0, 1);
-	public final static Vector X_AXIS= new Vector(1, 0, 0);
-	public final static Vector Y_AXIS= new Vector(0, 1, 0);
+	public final static Vector NEGATIVE_Y_AXIS = new Vector(0, -1, 0);
+	
 	private Point vector;
 
 	// ***************** Constructors ******************** //

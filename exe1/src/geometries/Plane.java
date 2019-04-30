@@ -51,10 +51,16 @@ public class Plane implements Geometry {
 	}
 
 	// ***************** Getters ******************** //
+	/**
+	 *get a point that is in the plane
+	 */
 	public Point getPoint() {
 		return point;
 	}
-
+	
+	/**
+	 * get a normalized vector that is orthogonal to the plane
+	 */
 	public Vector getNormal() {
 		return normalVector;
 	}
@@ -71,30 +77,35 @@ public class Plane implements Geometry {
 		return normalVector;
 	}
 
+	/**
+	 * returns a list with all intersection points of a given ray with the plane
+	 */
 	@Override
 	public List<Point> findIntersections(Ray ray) {
-		List<Point> list = new ArrayList<Point>();
-		
+		List<Point> list;
+		//in case the ray is included in the plane or parallel to it: empty list
 		if (Util.isZero(normalVector.DotProduct(ray.getVector())))
-			return list;
-		
-		if(this.getPoint().equals(ray.getBasePoint())) {
+			return EMPTY_LIST;
+		//in case (rare...) the base point is the representing point of the plane: add it.
+		if(point.equals(ray.getBasePoint())) {
+			list = new ArrayList<Point>();
 			list.add(ray.getBasePoint());
 			return list;
 		}
-					
-		double t= this.getPoint().subtract(ray.getBasePoint()).DotProduct(normalVector)
+		
+		//t is the coefficient of the 
+		double t= point.subtract(ray.getBasePoint()).DotProduct(normalVector)
 				/ normalVector.DotProduct(ray.getVector());
 		if(t< 0)
-			return list;
+			return EMPTY_LIST;
 		if (Util.isZero(t)) {
+			list  = new ArrayList<Point>();
 			list.add(ray.getBasePoint());
 			return list;
 		}
 			
-		Point p = new Point(ray.getBasePoint()
-			.addVector(ray.getVector().scale(t)));
-		
+		Point p = new Point(ray.getBasePoint().addVector(ray.getVector().scale(t)));
+		list  = new ArrayList<Point>();
 		list.add(p);
 		return list;
 	}
