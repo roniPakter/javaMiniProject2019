@@ -11,7 +11,7 @@ import javax.imageio.stream.*;
 public class ImageWriter {
 //go22gogogogogogo33
 	private double _imageWidth, _imageHeight;
-	public int _nX, _nY;
+	private int _nX, _nY;
 
 	final String PROJECT_PATH = System.getProperty("user.dir");
 
