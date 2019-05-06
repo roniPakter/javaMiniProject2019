@@ -9,7 +9,7 @@ import javax.imageio.*;
 import javax.imageio.stream.*;
 
 public class ImageWriter {
-//gogogogo
+//go22gogogogogogo33
 	private double _imageWidth, _imageHeight;
 	private int _nX, _nY;
 
