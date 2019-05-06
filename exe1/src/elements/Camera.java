@@ -39,22 +39,22 @@ public class Camera {
 	}
 
 	// ***************** Getters ******************** //
-	/**returns the P0 point of the camera position*/
+	/** returns the P0 point of the camera position */
 	public Point getP0() {
 		return p0;
 	}
 
-	/**returns the vector of the forward direction*/
+	/** returns the vector of the forward direction */
 	public Vector getToVector() {
 		return vTo;
 	}
 
-	/**returns the vector of the up direction*/
+	/** returns the vector of the up direction */
 	public Vector getUpVector() {
 		return vUp;
 	}
 
-	/**returns the vector of the right direction*/
+	/** returns the vector of the right direction */
 	public Vector getRightVector() {
 		return vRight;
 	}
@@ -65,56 +65,45 @@ public class Camera {
 	 */
 	@Override
 	public String toString() {
-		return "P0 position: " + p0.toString() + 
-				"\nUp direction: " + vUp.toString() + 
-				"\nTo direction: " + vTo.toString() + 
-				"\nRight direction: " + vRight.toString();
+		return "P0 position: " + p0.toString() + "\nUp direction: " + vUp.toString() + "\nTo direction: "
+				+ vTo.toString() + "\nRight direction: " + vRight.toString();
 	}
 
 	// ***************** Operations ******************** //
 	/**
-	 * given the details of the camera's current view plane (screen),
-	 * create a ray goes from the camera through the center of an asked pixel
-	 * @param nx the number of columns
-	 * @param ny the number of rows
-	 * @param i the place of the pixel in rows
-	 * @param j the pace of the pixel in columns
-	 * @param screenDistance 
-	 * @param screenWidth 
+	 * given the details of the camera's current view plane (screen), create a ray
+	 * goes from the camera through the center of an asked pixel
+	 * 
+	 * @param nx             the number of columns
+	 * @param ny             the number of rows
+	 * @param i              the place of the pixel in rows
+	 * @param j              the pace of the pixel in columns
+	 * @param screenDistance
+	 * @param screenWidth
 	 * @param screenHeight
 	 * @return a Ray from the camera through the center of the [i,j] pixel
 	 */
-	public Ray constructRayThroughPixel(int nx, int ny, int i, int j, double screenDistance, double screenWidth, double screenHeight) {
-		//Pc is the center point of the view plane: P0 + d*vTo
+	public Ray constructRayThroughPixel(int nx, int ny, int i, int j, double screenDistance, double screenWidth,
+			double screenHeight) {
+		// Pc is the center point of the view plane: P0 + d*vTo
 		Point pc = p0.addVector(vTo.scale(screenDistance));
-		//Xi and Yj are the coefficients that would take us to the asked point from the Pc point
-		//Xi for moving in the X axis direction (right / left)
+		// Xi and Yj are the coefficients that would take us to the asked point from the
+		// Pc point
+		// Xi for moving in the X axis direction (right / left)
 		double xi = (j - (nx - 1) / 2d) * screenWidth / nx;
-		//Yj for moving in the Y axis direction (down / up) 
+		// Yj for moving in the Y axis direction (down / up)
 		double yj = (i - (ny - 1) / 2d) * screenHeight / ny;
-		//in case the both coefficients are zero, the asked point is the Pc point
+		// in case the both coefficients are zero, the asked point is the Pc point
 		Point pij = pc;
-		if(!Util.isZero(xi)) 
-		{
-		pij = pij.addVector(vRight.scale(xi));
+		if (!Util.isZero(xi)) {
+			pij = pij.addVector(vRight.scale(xi));
 		}
-		if(!Util.isZero(yj))
-		{
-		pij = pij.addVector(vUp.scale(-yj));
-		}	
-		//the vector leads to the asked point is: Pij - P0
+		if (!Util.isZero(yj)) {
+			pij = pij.addVector(vUp.scale(-yj));
+		}
+		// the vector leads to the asked point is: Pij - P0
 		Vector vij = pij.subtract(p0);
-		return new Ray(p0,vij);
+		return new Ray(p0, vij);
 	}
 
-
 }
-
-
-
-
-
-
-
-
-

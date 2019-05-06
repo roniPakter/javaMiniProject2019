@@ -121,7 +121,7 @@ public class Vector {
 	}
 
 	/**
-	 * get the length of the vector
+	 * get the real length of the vector
 	 * 
 	 * @return a double value of the length
 	 */
@@ -130,7 +130,7 @@ public class Vector {
 	}
 
 	/**
-	 * get the length of the vector
+	 * get the squared length of the vector
 	 * 
 	 * @return a double value of the length
 	 */
