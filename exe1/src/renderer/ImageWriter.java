@@ -9,7 +9,6 @@ import javax.imageio.*;
 import javax.imageio.stream.*;
 
 public class ImageWriter {
-//go22gogogogogogo33
 	private double _imageWidth, _imageHeight;
 	private int _nX, _nY;
 
@@ -46,6 +45,14 @@ public class ImageWriter {
 
 	public void setNy(int _Ny) { this._nY = _Ny; }
 	public void setNx(int _Nx) { this._nX = _Nx; }
+	
+	// ***************** Operations ******************** //
+	@Override
+	public String toString() {
+		return "Name: " + _imageName + 
+				"\nSize: " +_imageWidth + " X " + _imageHeight + 
+				"\nPixels Number: " + _nX + " X " + _nY;
+	}
 
 	// ***************** Operations ******************** //
 

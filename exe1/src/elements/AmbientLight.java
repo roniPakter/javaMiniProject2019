@@ -25,6 +25,14 @@ public class AmbientLight {
 		_intensity = iA.scale(kA);
 	}
 
+	/**
+	 * Copy ctor for AmbientLight
+	 * @param ambientLight
+	 */
+	public AmbientLight(AmbientLight ambientLight) {
+		_intensity = new Color(ambientLight.getIntensity());
+	}
+
 	// ***************** Getters/Setters ********************** //
 	public Color getIntensity() {
 		return _intensity;
