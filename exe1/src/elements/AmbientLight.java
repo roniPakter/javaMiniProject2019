@@ -15,7 +15,7 @@ public class AmbientLight {
 	
 	// ***************** Constructors ********************** //
 	/**
-	 * Ctor that gets the color of the light and the intensity coefficient. calculates the final color for the ambient light.
+	 * ctor that gets the color of the light and the intensity coefficient. calculates the final color for the ambient light.
 	 * @param iA
 	 * @param kA
 	 */
@@ -36,6 +36,15 @@ public class AmbientLight {
 	// ***************** Getters/Setters ********************** //
 	public Color getIntensity() {
 		return _intensity;
+	}
+	// ***************** Administration ********************** //
+	
+	/**
+	 * string representation for the ambient light
+	 */
+	@Override
+	public String toString() {
+		return "Ia = " + _iA + ", Ka = " + _kA + ", Intensity = " + _intensity;
 	}
 
 }

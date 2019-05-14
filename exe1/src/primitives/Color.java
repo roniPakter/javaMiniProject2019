@@ -15,7 +15,8 @@ public class Color {
 	 */
 	double _r = 0.0, _g = 0.0, _b = 0.0;
 
-	final static Color BLACK = new Color();
+	public final static Color BLACK = new Color();
+	public final static Color WHITE = new Color(255, 255, 255);
 
 	/**
 	 * Default constructor - to generate Black Color
@@ -176,6 +177,14 @@ public class Color {
 		double g = _g / k;
 		double b = _b / k;
 		return new Color(r, g, b);
+	}
+	
+	/**
+	 * string representation of the color
+	 */
+	@Override
+	public String toString() {
+		return "RGB: R = " + _r + ", G = " + _g + ", B = " + _b;
 	}
 
 }

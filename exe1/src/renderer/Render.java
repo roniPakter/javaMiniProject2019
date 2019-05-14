@@ -6,17 +6,25 @@ import primitives.Point;
 import primitives.Ray;
 import scene.Scene;
 
+/**
+ *  Represents an integration of all relevant components to create a 3D scene and an image of it
+ */
 public class Render {
+	/** ImageWriter object to write the image of the scene*/
 	ImageWriter _imageWriter;
+	/** the scene holds all the data of the 3D model and the camera*/
 	Scene _scene;
 
 	// ***************** Constructors ******************** //
+	/**
+	 * constructor that gets the image writer and the scene objects
+	 * @param imageWriter
+	 * @param scene
+	 */
 	public Render(ImageWriter imageWriter, Scene scene) {
 		_imageWriter = imageWriter;
 		_scene = scene;
 	}
-
-	// ***************** Getters ******************** //
 
 	// ***************** Administrations ******************** //
 	/**
@@ -28,61 +36,99 @@ public class Render {
 	}
 
 	// ***************** Operations ******************** //
+	
+	/**
+	 * the method writes an image of the scene, for every pixel we calculate the color and write it
+	 */
 	public void renderImage() {
+		//number of rows
 		int nX = _imageWriter.getNx();
+		//number of columns
 		int nY = _imageWriter.getNy();
 		double screenDistance = _scene.getScreenDistance();
 		double screenHeight = _imageWriter.getHeight();
 		double screenWidth = _imageWriter.getWidth();
 		Color backgroundColor = _scene.getColorBackground();
-		
-		for (int i =0; i < nX; ++i) {
+
+		for (int i = 0; i < nX; ++i) {
 			for (int j = 0; j < nY; ++j) {
-				Ray ray = _scene.getCamera().constructRayThroughPixel(nX, nY, i, j, screenDistance, screenWidth, screenHeight);
+				//create the ray that goes through the center of the current pixel
+				Ray ray = _scene.getCamera().constructRayThroughPixel(nX, nY, i, j, screenDistance, screenWidth,
+						screenHeight);
+				//get all the intersection points of the ray with the model shapes
 				List<Point> intersectPoints = _scene.getGeometries().findIntersections(ray);
 				if (intersectPoints.isEmpty())
+					//in case there are no intersections - paint the background color
 					_imageWriter.writePixel(i, j, backgroundColor.getColor());
 				else {
+					//if there are intersections - find the closest point to the camera
 					Point closestPoint = getClosestPoint(intersectPoints);
+					//paint the pixel with the matching color
 					_imageWriter.writePixel(i, j, calcColor(closestPoint).getColor());
 				}
 			}
-		}
+		}	
 	}
 
-	public Color calcColor(Point p) {
+	/**
+	 * calculates the color of a specific point on a geometric model
+	 * @param point
+	 * @return
+	 */
+	private Color calcColor(Point point) {
+		//for now, only the ambient light is return in any case
 		return _scene.getAmbientLight().getIntensity();
 	}
 
-	public Point getClosestPoint(List<Point> points) {
+	/**
+	 * gets a collection of points and returns the closest point to the camera position in the scene 
+	 * @param points
+	 * @return
+	 */
+	private Point getClosestPoint(List<Point> points) {
+		//P0 is the point of the camera position
 		Point p0 = _scene.getCamera().getP0();
-		Point temp = points.get(0);
-		for (Point i : points) {
-			if (i.distance(p0) < temp.distance(p0))
-				temp = i;
+		//we start with the first point in the list
+		Point closest = points.get(0);
+		for (Point current : points) {
+			if (current.distance(p0) < closest.distance(p0))
+				closest = current;
 		}
-		return new Point(temp);
+		return closest;
 	}
 
+	/**
+	 * a method to print a grid on the image after we printed the 3D model
+	 * @param interval - the interval of the grid cells 
+	 * @param gridColor - color for the grid
+	 */
 	public void printGrid(int interval, Color gridColor) {
-
+		//to check if the current row is a row of the grid
 		int pixelCheckRows = interval - 1;
 
-		for (int i = 0; i < 500; i++) {
+		for (int i = 0; i < _imageWriter.getNx(); i++) {
 			if (i == pixelCheckRows) {
-				for (int j = 0; j < _imageWriter.getNx(); j++)
+				//in case we are in a grid row iteration - paint the whole row
+				for (int j = 0; j < _imageWriter.getNy(); j++)
 					_imageWriter.writePixel(i, j, gridColor.getColor());
+				//move the next row check one interval forward
 				pixelCheckRows += interval;
 			} else {
+				//in case we are not in a painted row iteration - we check the columns
 				int pixelCheckColumns = interval - 1;
 				for (int j = 0; j < _imageWriter.getNy(); j++) {
 					if (j == pixelCheckColumns) {
+						//in case its a column that should be painted - paint the pixel
 						_imageWriter.writePixel(i, j, gridColor.getColor());
+						//and move the column check value one interval forward
 						pixelCheckColumns += interval;
 					}
 				}
 			}
 		}
+	}
+	
+	public void writeToImage() {
 		_imageWriter.writeToImage();
 	}
 }

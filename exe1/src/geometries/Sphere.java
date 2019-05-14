@@ -81,14 +81,13 @@ public class Sphere extends RadialGeometries {
 		// intersection points.
 		double th = Math.sqrt((radius * radius) - (d * d));
 
-		if ((tm + th) > 0)
+		if ((tm + th) > 0 && !Util.isZero(tm + th))
 			intersectPoints.add(p0.addVector(v.scale(tm + th)));
-		if ((tm - th) > 0)
+		if ((tm - th) > 0 && !Util.isZero(tm - th))
 			intersectPoints.add(p0.addVector(v.scale(tm - th)));
 		// if the distance is radius then the only intersection is the point of (tm * v)
 		if (Util.isZero(Util.usubtract(d, radius)) && !(Util.isZero(tm)) && tm > 0) {
 			intersectPoints.add(p0.addVector(v.scale(tm)));
-			return intersectPoints;
 		}
 		return intersectPoints;
 
