@@ -5,6 +5,9 @@ package elements;
 
 import primitives.Color;
 
+/**
+ * represents a light for defualt state without light sorce
+ */
 public class AmbientLight {
 	/** the basic RBG components of the ambient light */
 	Color _iA;
