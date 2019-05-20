@@ -8,6 +8,7 @@ import org.junit.Test;
 
 import elements.Camera;
 import geometries.Intersectable;
+import geometries.Intersectable.GeoPoint;
 import geometries.Plane;
 import geometries.Sphere;
 import geometries.Triangle;
@@ -102,7 +103,7 @@ public class CameraTest {
 	 * @return
 	 */
 	private int countAllIntersectionsFromCamera(Camera camera, int nx, int ny, double screenDistance, double screenWidth, double screenHeight, Intersectable shape) {
-		ArrayList<Point> intersectionList = new ArrayList<Point>();
+		ArrayList<GeoPoint> intersectionList = new ArrayList<GeoPoint>();
 		//for each pixel : find the intersections
 		for (int i = 0; i < nx; ++i) {
 			for (int j = 0; j < ny; ++j) {

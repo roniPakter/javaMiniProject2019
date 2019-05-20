@@ -12,6 +12,7 @@ package geometries;
 import java.util.ArrayList;
 import java.util.List;
 
+import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Util;
@@ -33,6 +34,20 @@ public class Sphere extends RadialGeometries {
 	public Sphere(double radiusParm, Point centerParm) {
 		super(radiusParm);
 		centerPoint = new Point(centerParm);
+		_emission = Color.WHITE;
+	}
+	
+	/**
+	 * Ctor with radius and center ray and color
+	 * 
+	 * @param radiusParm
+	 * @param centerParm
+	 * @param emission
+	 */
+	public Sphere(double radiusParm, Point centerParm, Color emission) {
+		super(radiusParm);
+		centerPoint = new Point(centerParm);
+		_emission = emission;
 	}
 
 	// ***************** Getters ******************** //
@@ -54,14 +69,14 @@ public class Sphere extends RadialGeometries {
 	}
 
 	@Override
-	public List<Point> findIntersections(Ray ray) {
-		List<Point> intersectPoints = new ArrayList<Point>();
+	public List<GeoPoint> findIntersections(Ray ray) {
+		List<GeoPoint> intersectPoints = new ArrayList<GeoPoint>();
 		Point o = centerPoint;
 		Point p0 = ray.getBasePoint();
 		Vector v = ray.getVector();
 
 		if (o.equals(p0)) {
-			intersectPoints.add(p0.addVector(v.scale(radius)));
+			intersectPoints.add(new GeoPoint( p0.addVector(v.scale(radius)), this));
 			return intersectPoints;
 		}
 		// the vector goes from the ray base to the sphere center
@@ -72,7 +87,7 @@ public class Sphere extends RadialGeometries {
 		double d = Math.sqrt(u.squaredLength() - (tm * tm));
 
 		if (Util.isZero(Util.usubtract(u.length(), radius)))
-			intersectPoints.add(p0);
+			intersectPoints.add(new GeoPoint(p0, this));
 
 		// if the distance is bigger then the radius - there are no intersections
 		if (Util.usubtract(radius, d) < 0)
@@ -82,12 +97,12 @@ public class Sphere extends RadialGeometries {
 		double th = Math.sqrt((radius * radius) - (d * d));
 
 		if ((tm + th) > 0 && !Util.isZero(tm + th))
-			intersectPoints.add(p0.addVector(v.scale(tm + th)));
+			intersectPoints.add(new GeoPoint(p0.addVector(v.scale(tm + th)), this));
 		if ((tm - th) > 0 && !Util.isZero(tm - th))
-			intersectPoints.add(p0.addVector(v.scale(tm - th)));
+			intersectPoints.add(new GeoPoint(p0.addVector(v.scale(tm - th)), this));
 		// if the distance is radius then the only intersection is the point of (tm * v)
 		if (Util.isZero(Util.usubtract(d, radius)) && !(Util.isZero(tm)) && tm > 0) {
-			intersectPoints.add(p0.addVector(v.scale(tm)));
+			intersectPoints.add(new GeoPoint(p0.addVector(v.scale(tm)), this));
 		}
 		return intersectPoints;
 

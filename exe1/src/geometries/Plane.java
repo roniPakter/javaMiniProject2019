@@ -11,6 +11,7 @@ package geometries;
 import java.util.ArrayList;
 import java.util.List;
 
+import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Util;
@@ -19,18 +20,46 @@ import primitives.Vector;
 /**
  * represents a plane in the space
  */
-public class Plane implements Geometry {
+public class Plane extends Geometry {
 	protected Point point;
 	protected Vector normalVector;
 
 	// ***************** Constructors ******************** //
 	/**
-	 * cotr with a point and a normal vector
-	 * 
+	 * cotr with a point and a normal vector 
 	 * @param pointParm
 	 * @param normalParm
 	 */
 	public Plane(Point pointParm, Vector normalParm) {
+		_emission = Color.WHITE;
+		point = new Point(pointParm);
+		normalVector = (new Vector(normalParm)).normalization();
+	}
+
+	/**
+	 * Ctor with three points and color
+	 * 
+	 * @param point1
+	 * @param point2
+	 * @param point3
+	 * @param emission
+	 */
+	public Plane(Point point1, Point point2, Point point3, Color emission) {
+		//should we put "new" on this?
+		_emission = emission;
+		Vector a = point2.subtract(point1);
+		Vector b = point3.subtract(point1);
+		normalVector = a.crossProduct(b).normalization();
+		point = new Point(point1);
+	}
+	/**
+	 * cotr with a point and a normal vector and color
+	 * @param pointParm
+	 * @param normalParm
+	 * @param emission
+	 */
+	public Plane(Point pointParm, Vector normalParm, Color emission) {
+		_emission = emission;
 		point = new Point(pointParm);
 		normalVector = (new Vector(normalParm)).normalization();
 	}
@@ -43,11 +72,11 @@ public class Plane implements Geometry {
 	 * @param point3
 	 */
 	public Plane(Point point1, Point point2, Point point3) {
+		_emission = Color.WHITE;
 		Vector a = point2.subtract(point1);
 		Vector b = point3.subtract(point1);
 		normalVector = a.crossProduct(b).normalization();
 		point = new Point(point1);
-
 	}
 
 	// ***************** Getters ******************** //
@@ -63,7 +92,7 @@ public class Plane implements Geometry {
 	 */
 	public Vector getNormal() {
 		return normalVector;
-	}
+	}	
 
 	// ***************** Administration ******************** //
 	@Override
@@ -81,15 +110,15 @@ public class Plane implements Geometry {
 	 * returns a list with all intersection points of a given ray with the plane
 	 */
 	@Override
-	public List<Point> findIntersections(Ray ray) {
-		List<Point> list;
+	public List<GeoPoint> findIntersections(Ray ray) {
+		List<GeoPoint> list;
 		//in case the ray is included in the plane or parallel to it: empty list
 		if (Util.isZero(normalVector.DotProduct(ray.getVector())))
 			return EMPTY_LIST;
 		//in case (rare...) the base point is the representing point of the plane: add it.
 		if(point.equals(ray.getBasePoint())) {
-			list = new ArrayList<Point>();
-			list.add(ray.getBasePoint());
+			list = new ArrayList<GeoPoint>();
+			list.add(new GeoPoint(ray.getBasePoint(), this));
 			return list;
 		}
 		
@@ -99,14 +128,14 @@ public class Plane implements Geometry {
 		if(t< 0)
 			return EMPTY_LIST;
 		if (Util.isZero(t)) {
-			list  = new ArrayList<Point>();
-			list.add(ray.getBasePoint());
+			list  = new ArrayList<GeoPoint>();
+			list.add(new GeoPoint(ray.getBasePoint(), this));
 			return list;
 		}
 			
 		Point p = new Point(ray.getBasePoint().addVector(ray.getVector().scale(t)));
-		list  = new ArrayList<Point>();
-		list.add(p);
+		list  = new ArrayList<GeoPoint>();
+		list.add(new GeoPoint(p, this));
 		return list;
 	}
 }

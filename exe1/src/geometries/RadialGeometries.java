@@ -12,7 +12,7 @@ import primitives.Util;
 /**
  * a super class for all redials, representing the data of the radius
  */
-abstract class RadialGeometries implements Geometry{
+abstract class RadialGeometries extends Geometry{
 	protected double radius;
 
 	// ***************** Constructor ******************** //

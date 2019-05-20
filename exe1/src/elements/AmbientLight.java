@@ -8,9 +8,8 @@ import primitives.Color;
 /**
  * represents a light for defualt state without light sorce
  */
-public class AmbientLight {
-	/** the basic RBG components of the ambient light */
-	Color _iA;
+public class AmbientLight extends Light {
+	
 	/** the intensity coefficient of the ambient light*/
 	double _kA;
 	/** the final color of the light: Ia * Ka*/
@@ -23,7 +22,7 @@ public class AmbientLight {
 	 * @param kA
 	 */
 	public AmbientLight(Color iA, double kA) {
-		_iA = new Color(iA);
+		super(iA);
 		_kA = kA;
 		_intensity = iA.scale(kA);
 	}
@@ -33,6 +32,7 @@ public class AmbientLight {
 	 * @param ambientLight
 	 */
 	public AmbientLight(AmbientLight ambientLight) {
+		 super(ambientLight._color);
 		_intensity = new Color(ambientLight.getIntensity());
 	}
 
@@ -47,7 +47,7 @@ public class AmbientLight {
 	 */
 	@Override
 	public String toString() {
-		return "Ia = " + _iA + ", Ka = " + _kA + ", Intensity = " + _intensity;
+		return "Ia = " + _color + ", Ka = " + _kA + ", Intensity = " + _intensity;
 	}
 
 }

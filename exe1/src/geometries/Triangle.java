@@ -11,6 +11,7 @@ package geometries;
 import java.util.ArrayList;
 import java.util.List;
 
+import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
@@ -33,6 +34,21 @@ public class Triangle extends Plane {
 	public Triangle(Point a, Point b, Point c) {
 		//one point will be the point to set the plane which includes the triangle
 		super(a, b, c);
+		//the rest are the b and c vertices
+		bVertex = new Point(b);
+		cVertex = new Point(c);
+	}
+	
+	/**
+	 * Ctor with three points and color
+	 * @param a Vertex
+	 * @param b Vertex
+	 * @param c Vertex
+	 * @param emission
+	 */
+	public Triangle(Point a, Point b, Point c, Color emission) {
+		//one point will be the point to set the plane which includes the triangle
+		super(a, b, c, emission);
 		//the rest are the b and c vertices
 		bVertex = new Point(b);
 		cVertex = new Point(c);
@@ -61,12 +77,12 @@ public class Triangle extends Plane {
 	}
 
 	@Override 
-	public List<Point> findIntersections(Ray ray) {
-		List<Point>intersectPoints = super.findIntersections(ray); 
+	public List<GeoPoint> findIntersections(Ray ray) {
+		List<GeoPoint>intersectPoints = super.findIntersections(ray); 
 		Point rayBasePoint = ray.getBasePoint();
 		
 		if(intersectPoints.size() == 0)
-			return new ArrayList<Point>();
+			return EMPTY_LIST;
 		
 		Vector v1 = point.subtract(rayBasePoint);
 		Vector v2 = bVertex.subtract(rayBasePoint);
@@ -79,7 +95,7 @@ public class Triangle extends Plane {
 		if(intersectPoints.get(0).equals(rayBasePoint)) 
 			return this.findIntersections(new Ray(rayBasePoint.addVector(ray.getVector().scale(-0.005)), ray.getVector()));
 
-		pMinusP0 = rayBasePoint.subtract(intersectPoints.get(0));
+		pMinusP0 = rayBasePoint.subtract(intersectPoints.get(0).point);
 		double n1DotProductCheck = pMinusP0.DotProduct(n1);
 		double n2DotProductCheck = pMinusP0.DotProduct(n2);
 		double n3DotProductCheck = pMinusP0.DotProduct(n3);
@@ -87,7 +103,7 @@ public class Triangle extends Plane {
 		if(n1DotProductCheck < 0 && n2DotProductCheck < 0 && n3DotProductCheck < 0 ||
 			n1DotProductCheck > 0 && n2DotProductCheck > 0 && n3DotProductCheck > 0	)
 			return intersectPoints;
-		return new ArrayList<Point>();
+		return new ArrayList<GeoPoint>();
 	 }
 
 }

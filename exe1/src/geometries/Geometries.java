@@ -2,7 +2,6 @@ package geometries;
 
 import java.util.ArrayList;
 import java.util.List;
-import primitives.Point;
 import primitives.Ray;
 
 /**
@@ -45,8 +44,8 @@ public class Geometries implements Intersectable {
 	 * find all intersections of a ray with the shapes in the collection
 	 */
 	@Override
-	public List<Point> findIntersections(Ray ray) {
-		List<Point> intersectList = new ArrayList<Point>();
+	public List<GeoPoint> findIntersections(Ray ray) {
+		List<GeoPoint> intersectList = new ArrayList<GeoPoint>();
 		for (Intersectable intersectable : geometriesList) {
 			intersectList.addAll(intersectable.findIntersections(ray));
 		}

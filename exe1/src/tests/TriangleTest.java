@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import geometries.Intersectable.GeoPoint;
 import geometries.Triangle;
 import primitives.Point;
 import primitives.Ray;
@@ -43,7 +44,7 @@ public class TriangleTest {
 		Vector parallelVector = new Vector(1,0,0);
 		Point pointBelowTriangle = new Point(0.5 ,0.5 ,-1);
 		Point pointAboveTriangle = new Point(0.5 ,0.5 ,1);
-		List<Point> actualInsecPoints;
+		List<GeoPoint> actualInsecPoints;
 		
 		/**
 		 * a case for an orthogonal ray starts above the triangle upwards    

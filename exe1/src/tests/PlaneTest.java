@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.junit.Test;
 import geometries.*;
+import geometries.Intersectable.GeoPoint;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
@@ -37,42 +38,42 @@ public class PlaneTest {
 	public void testFindIntersections()
 	{
 		Vector parallelVector = new Vector(1,0,0);
-		Point pointBelowPlane = new Point(0,0,-1);
-		Point pointAbovePlane = new Point(1,1,1);
-		List<Point> actualInsecPoints;
+		GeoPoint pointBelowPlane = new GeoPoint(new Point(0,0,-1), p1);
+		GeoPoint pointAbovePlane = new GeoPoint(new Point(1,1,1), p1);
+		List<GeoPoint> actualInsecPoints;
 		
 		/**
 		 * a case for an orthogonal ray starts above the plane upwards    
 		 * */
-		Ray r1 = new Ray(pointAbovePlane,planeNormal);
+		Ray r1 = new Ray(pointAbovePlane.point,planeNormal);
 		actualInsecPoints = p1.findIntersections(r1);
 		assertEquals(0 ,p1.findIntersections(r1).size());
 		
 		/**
 		 * a case for an orthogonal ray starts right in the plane upwards
 		 */	
-		Ray r2 = new Ray(pointInPlane,planeNormal);
+		Ray r2 = new Ray(pointInPlane, planeNormal);
 		actualInsecPoints = p1.findIntersections(r2);
-		assertTrue(actualInsecPoints.size() == 1 && actualInsecPoints.contains(pointInPlane));
+		assertTrue(actualInsecPoints.size() == 1 && actualInsecPoints.contains(new GeoPoint(pointInPlane, p1)));
 		
 		/**
 		 * a case for a not-orthogonal ray intersects the plane
 		 */
-		Ray r3 = new Ray(pointBelowPlane,new Vector(1,1,1));
+		Ray r3 = new Ray(pointBelowPlane.point,new Vector(1,1,1));
 		actualInsecPoints = p1.findIntersections(r3);
-		assertTrue(actualInsecPoints.size() == 1 && actualInsecPoints.contains(new Point(1,1,0)));
+		assertTrue(actualInsecPoints.size() == 1 && actualInsecPoints.contains(new GeoPoint(new Point(1,1,0), p1)));
 		
 		/**
 		 * a case for an orthogonal ray starts below the plane
 		 */
-		Ray r4 = new Ray(pointBelowPlane,planeNormal);
+		Ray r4 = new Ray(pointBelowPlane.point, planeNormal);
 		actualInsecPoints = p1.findIntersections(r4);
-		assertTrue(actualInsecPoints.size() == 1 && actualInsecPoints.contains(Point.ZERO));
+		assertTrue(actualInsecPoints.size() == 1 && actualInsecPoints.contains(new GeoPoint(Point.ZERO, p1)));
 		
 		/**
 		 * a case that the ray is parallel with the plane
 		 */
-		Ray r5 = new Ray(pointAbovePlane,parallelVector);
+		Ray r5 = new Ray(pointAbovePlane.point, parallelVector);
 		assertEquals(p1.findIntersections(r5).size(), 0);
 		 
 		/**

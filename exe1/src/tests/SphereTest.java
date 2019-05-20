@@ -9,6 +9,7 @@ import java.util.List;
 
 import org.junit.Test;
 
+import geometries.Intersectable.GeoPoint;
 import geometries.Sphere;
 import primitives.Point;
 import primitives.Ray;
@@ -42,7 +43,7 @@ public class SphereTest {
 		 //a ray intersects the sphere twice
 		Point point = new Point(0,-4,0);
 		Ray ray = new Ray(point, directionVector);
-		List<Point> actualInsecPoints  = sphere2.findIntersections(ray);
+		List<GeoPoint> actualInsecPoints  = sphere2.findIntersections(ray);
 		
 		/**
 		 * Check a regular two-intersections case

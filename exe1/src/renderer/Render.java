@@ -1,6 +1,8 @@
 package renderer;
 
 import java.util.List;
+
+import geometries.Intersectable.GeoPoint;
 import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
@@ -56,13 +58,13 @@ public class Render {
 				Ray ray = _scene.getCamera().constructRayThroughPixel(nX, nY, i, j, screenDistance, screenWidth,
 						screenHeight);
 				//get all the intersection points of the ray with the model shapes
-				List<Point> intersectPoints = _scene.getGeometries().findIntersections(ray);
+				List<GeoPoint> intersectPoints = _scene.getGeometries().findIntersections(ray);
 				if (intersectPoints.isEmpty())
 					//in case there are no intersections - paint the background color
 					_imageWriter.writePixel(i, j, backgroundColor.getColor());
 				else {
 					//if there are intersections - find the closest point to the camera
-					Point closestPoint = getClosestPoint(intersectPoints);
+					GeoPoint closestPoint = getClosestPoint(intersectPoints);
 					//paint the pixel with the matching color
 					_imageWriter.writePixel(i, j, calcColor(closestPoint).getColor());
 				}
@@ -75,23 +77,25 @@ public class Render {
 	 * @param point
 	 * @return
 	 */
-	private Color calcColor(Point point) {
-		//for now, only the ambient light is return in any case
-		return _scene.getAmbientLight().getIntensity();
+	private Color calcColor(GeoPoint geoPoint) {
+		Color color = _scene.getAmbientLight().getIntensity();
+		color.add(geoPoint.geometry.getEmission());
+		//return the emission color of the geometric body occupies the point
+		return color;
 	}
 
 	/**
-	 * gets a collection of points and returns the closest point to the camera position in the scene 
+	 * gets a collection of geoPoints and returns the closest geoPoint to the camera position in the scene 
 	 * @param points
 	 * @return
 	 */
-	private Point getClosestPoint(List<Point> points) {
+	private GeoPoint getClosestPoint(List<GeoPoint> geoPoints) {
 		//P0 is the point of the camera position
 		Point p0 = _scene.getCamera().getP0();
-		//we start with the first point in the list
-		Point closest = points.get(0);
-		for (Point current : points) {
-			if (current.distance(p0) < closest.distance(p0))
+		//we start with the first geoPoint in the list
+		GeoPoint closest = geoPoints.get(0);
+		for (GeoPoint current : geoPoints) {
+			if (current.point.distance(p0) < closest.point.distance(p0))
 				closest = current;
 		}
 		return closest;

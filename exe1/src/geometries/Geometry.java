@@ -2,14 +2,35 @@ package geometries;
 
 import primitives.*;
 /**
- * interface for a single geometry shape
+ * Abstract class for every geometry shape
  */
-public interface Geometry extends Intersectable{
+public abstract class Geometry implements Intersectable{
+	/**
+	 * emission light of each geometric body
+	 */
+	protected Color _emission;
+	
+	// ***************** Getters/Setters ******************** //
+	/**
+	 * get the emission light of the geometric body
+	 */
+	public Color getEmission() {
+		return _emission;
+	}
+	
+	/**
+	 * set the emission light of the geometric body
+	 */
+	public void setEmission(Color emissionColor) {
+		_emission = emissionColor;
+	}
+	
+	
+	// ***************** Operation ******************** //
 	/**
 	 * get the normal vector to a given point on the surface of the geometry body
 	 * @param point
 	 * @return a new vector normalized and vertical to the given point
 	 */
-	Vector getNormal(Point point);
-	
+	abstract Vector getNormal(Point point);
 }

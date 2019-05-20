@@ -8,6 +8,7 @@
  */
 package geometries;
 
+import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
@@ -30,6 +31,19 @@ public class Tube extends RadialGeometries {
 	public Tube(double radiusParm, Ray centerRayParm) {
 		super(radiusParm);
 		centerRay = new Ray(centerRayParm);
+		_emission = Color.WHITE;
+	}
+	
+	/**
+	 * Cotr with the radius and the center ray and color
+	 * @param radiusParm
+	 * @param centerRayParm
+	 * @param emission
+	 */
+	public Tube(double radiusParm, Ray centerRayParm, Color emission) {
+		super(radiusParm);
+		centerRay = new Ray(centerRayParm);
+		_emission = emission;
 	}
 	
 	// ***************** Getters ******************** //
@@ -64,7 +78,7 @@ public class Tube extends RadialGeometries {
 	}
 
 	@Override
-	public List<Point> findIntersections(Ray ray) {
+	public List<GeoPoint> findIntersections(Ray ray) {
 		// TODO Auto-generated method stub
 		return null;
 	}

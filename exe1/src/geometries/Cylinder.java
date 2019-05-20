@@ -13,10 +13,12 @@ import primitives.Ray;
 import primitives.Vector;
 import static primitives.Util.isZero;
 
+import primitives.Color;
+
 /**
  * a class to represent a cylinder (a tube with a height)
  */
-public class Cylinder extends Tube implements Geometry {
+public class Cylinder extends Tube {
 	private double height;
 
 	// ***************** Constructors ******************** //
@@ -30,6 +32,21 @@ public class Cylinder extends Tube implements Geometry {
 	public Cylinder(double radiusParm, Ray centerRayParm, double heightParm) {
 		super(radiusParm, centerRayParm);
 		height = heightParm;
+		_emission = Color.WHITE;
+	}
+	
+	/**
+	 * Ctor that gets the radius the center ray and the height
+	 * 
+	 * @param radiusParm
+	 * @param centerRayParm
+	 * @param heightParm
+	 * @param emission
+	 */
+	public Cylinder(double radiusParm, Ray centerRayParm, double heightParm, Color emission) {
+		super(radiusParm, centerRayParm);
+		height = heightParm;
+		_emission = emission;
 	}
 
 	// ***************** Getters ******************** //
