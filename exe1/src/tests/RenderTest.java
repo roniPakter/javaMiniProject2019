@@ -1,6 +1,5 @@
 package tests;
 
-import static org.junit.Assert.assertEquals;
 import org.junit.Test;
 import elements.AmbientLight;
 import elements.Camera;
@@ -15,7 +14,7 @@ import scene.Scene;
  */
 public class RenderTest {
 	Scene scene = new Scene("Test scene");
-	ImageWriter imageWriter = new ImageWriter("test0", 500, 500, 1000, 1000);
+	ImageWriter imageWriter = new ImageWriter("test0", 500, 500, 500, 500);
 	Render render = new Render(imageWriter, scene);
 	Camera camera = new Camera(Point.ZERO,  Vector.Z_AXIS, Vector.NEGATIVE_Y_AXIS);
 	
@@ -27,28 +26,33 @@ public class RenderTest {
 		
 		scene.setCameraAndDistance(150, camera);
 		scene.setBackground(Color.BLACK);
-		scene.setAmbientLight(new AmbientLight(new Color(100, 100, 100), 2));
+		scene.setAmbientLight(new AmbientLight(new Color(100, 100, 100), 0.3));
 		Geometries geometries = new Geometries();
 		scene.setGeometries(geometries);
 		//add a sphere to the model
-		geometries.add(new Sphere(50, new Point(0, 0, 150)));
+		geometries.add(new Sphere(50, new Point(0, 0, 150), new Color(200,120,0)));
 		
 		//add 4 triangles to the model
+		//
 		geometries.add(new Triangle(new Point( 100, 0, 149),
 				 					new Point(  0, 100, 149),
-				 					new Point( 100, 100, 149)));
+				 					new Point( 100, 100, 149),
+				 					new Color(70,0,230)));
 		
 		geometries.add(new Triangle(new Point( 100, 0, 149),
 				 			 		new Point(  0, -100, 149),
-				 			 		new Point( 100,-100, 149)));
+				 			 		new Point( 100,-100, 149),
+				 					new Color(230,0,0)));
 		
 		geometries.add(new Triangle(new Point(-100, 0, 149),
 				 					new Point(  0, 100, 149),
-				 					new Point(-100, 100, 149)));
+				 					new Point(-100, 100, 149),
+				 					Color.BLACK));
 
 		geometries.add(new Triangle(new Point(-100, 0, 149),
 				 			 		new Point(  0,  -100, 149),
-				 			 		new Point(-100, -100, 149)));
+				 			 		new Point(-100, -100, 149),
+				 					new Color(0,255,30)));
 
 		render.renderImage();
 		//add a grid

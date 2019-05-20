@@ -17,7 +17,6 @@ public class PointLight extends Light{
 	protected double _kq;
 	@Override
 	public Color getIntensity() {
-	_color.scale()
 		return null;
 	} 
 	

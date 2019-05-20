@@ -79,7 +79,7 @@ public class Render {
 	 */
 	private Color calcColor(GeoPoint geoPoint) {
 		Color color = _scene.getAmbientLight().getIntensity();
-		color.add(geoPoint.geometry.getEmission());
+		color = color.add(geoPoint.geometry.getEmission());
 		//return the emission color of the geometric body occupies the point
 		return color;
 	}
