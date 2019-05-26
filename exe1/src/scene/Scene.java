@@ -1,4 +1,4 @@
-package scene;
+ package scene;
 
 import elements.*;
 import primitives.Color;

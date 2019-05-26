@@ -92,7 +92,7 @@ public class Triangle extends Plane {
 		Vector n3 = v3.crossProduct(v1).normalization();
 		
 		Vector pMinusP0;
-		if(intersectPoints.get(0).equals(rayBasePoint)) 
+		if(intersectPoints.get(0).point.equals(rayBasePoint)) 
 			return this.findIntersections(new Ray(rayBasePoint.addVector(ray.getVector().scale(-0.005)), ray.getVector()));
 
 		pMinusP0 = rayBasePoint.subtract(intersectPoints.get(0).point);

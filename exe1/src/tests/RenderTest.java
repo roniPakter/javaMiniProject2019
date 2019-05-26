@@ -13,10 +13,11 @@ import scene.Scene;
  * test for the render class
  */
 public class RenderTest {
+	Vector xAxisVector = new Vector(1,0,0);
 	Scene scene = new Scene("Test scene");
 	ImageWriter imageWriter = new ImageWriter("test0", 500, 500, 500, 500);
 	Render render = new Render(imageWriter, scene);
-	Camera camera = new Camera(Point.ZERO,  Vector.Z_AXIS, Vector.NEGATIVE_Y_AXIS);
+	Camera camera = new Camera(new Point(0,0,0),  Vector.Z_AXIS, Vector.NEGATIVE_Y_AXIS);
 	
 	/**
 	 * test the actual rendering of an image

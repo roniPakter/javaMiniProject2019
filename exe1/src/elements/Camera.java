@@ -83,16 +83,19 @@ public class Camera {
 	 * @param screenHeight
 	 * @return a Ray from the camera through the center of the [i,j] pixel
 	 */
-	public Ray constructRayThroughPixel(int nx, int ny, int i, int j, double screenDistance, double screenWidth,
+	public Ray constructRayThroughPixel(int nx, int ny, int j, int i, double screenDistance, double screenWidth,
 			double screenHeight) {
 		// Pc is the center point of the view plane: P0 + d*vTo
 		Point pc = p0.addVector(vTo.scale(screenDistance));
+		//ratio factors: rx is the width of each pixel
+		double rx = screenWidth / nx;
+		double ry = screenHeight / ny;
 		// Xi and Yj are the coefficients that would take us to the asked point from the
 		// Pc point
 		// Xi for moving in the X axis direction (right / left)
-		double xi = (j - (nx - 1) / 2d) * screenWidth / nx;
+		double xi = ((i - (nx / 2d)) * rx) + rx/2d;
 		// Yj for moving in the Y axis direction (down / up)
-		double yj = (i - (ny - 1) / 2d) * screenHeight / ny;
+		double yj = ((j - (ny / 2d)) * ry) + ry/2d;
 		// in case the both coefficients are zero, the asked point is the Pc point
 		Point pij = pc;
 		if (!Util.isZero(xi)) {

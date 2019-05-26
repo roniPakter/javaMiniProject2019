@@ -38,8 +38,8 @@ public class SphereTest {
 		Vector directionVector = new Vector(0,4,1);
 		//expected intersections
 		
-		Point insec1 = new Point(0,-1.9320241296301,0.5169939675925);
-		Point insec2 = new Point(0,1.461435894336,1.365358973584);
+		GeoPoint insec1 = new GeoPoint(new Point(0,-1.9320241296301,0.5169939675925), sphere2);
+		GeoPoint insec2 = new GeoPoint( new Point(0,1.461435894336,1.365358973584), sphere2);
 		 //a ray intersects the sphere twice
 		Point point = new Point(0,-4,0);
 		Ray ray = new Ray(point, directionVector);
@@ -74,7 +74,7 @@ public class SphereTest {
 		/**
 		 * Check the case the ray starts on the sphere and goes through it
 		 */
-		Ray goesThroughRay = new Ray(insec1, directionVector);
+		Ray goesThroughRay = new Ray(insec1.point, directionVector);
 		actualInsecPoints = sphere2.findIntersections(goesThroughRay);
 		assertTrue(actualInsecPoints.size() == 2);
 		assertTrue( actualInsecPoints.contains(insec1));
@@ -83,15 +83,15 @@ public class SphereTest {
 		/**
 		 * Check the case the ray starts on the sphere and goes outwards
 		 */
-		Ray goesOutwardsRay = new Ray(insec2, directionVector);
+		Ray goesOutwardsRay = new Ray(insec2.point, directionVector);
 		actualInsecPoints = sphere2.findIntersections(goesOutwardsRay);
 		assertTrue(actualInsecPoints.size() == 1 && actualInsecPoints.contains(insec2));
 		
 		//Check the case the ray goes through the center point
 		directionVector = new Vector(0,1,0);
 		Ray throughCenteRay = new Ray(point, directionVector);
-		insec1 = new Point(0,-2,0);
-		insec2 = new Point(0,2,0);
+		insec1 = new GeoPoint( new Point(0,-2,0),sphere2);
+		insec2 = new GeoPoint(new Point(0,2,0),sphere2);
 		actualInsecPoints = sphere2.findIntersections(throughCenteRay);
 		/**
 		 * the ray starts before the sphere and goes through the center point
@@ -115,14 +115,14 @@ public class SphereTest {
 		/**
 		 * the ray start on the sphere outwards and is in the direction of the center
 		 */
-		throughCenteRay = new Ray(insec2, directionVector);
+		throughCenteRay = new Ray(insec2.point, directionVector);
 		actualInsecPoints = sphere2.findIntersections(throughCenteRay);
 		assertTrue(actualInsecPoints.size() == 1 && actualInsecPoints.contains(insec2));
 		
 		/**
 		 * the ray starts on the sphere inwards and goes through the center
 		 */
-		throughCenteRay = new Ray(insec1, directionVector);
+		throughCenteRay = new Ray(insec1.point, directionVector);
 		actualInsecPoints = sphere2.findIntersections(throughCenteRay);
 		assertTrue(actualInsecPoints.size() == 2 && actualInsecPoints.contains(insec1) && actualInsecPoints.contains(insec2));
 		
@@ -137,14 +137,14 @@ public class SphereTest {
 		 * the ray osculates the sphere and starts before it
 		 */
 		ray = new Ray(new Point(0,-4,2), directionVector);
-		Point topPoint = new Point(0,0,2);
+		GeoPoint topPoint = new GeoPoint( new Point(0,0,2), sphere2);
 		actualInsecPoints = sphere2.findIntersections(ray);
 		assertTrue(actualInsecPoints.size() == 1 && actualInsecPoints.contains(topPoint));
 		
 		/**
 		 * the ray osculates the sphere and starts within it
 		 */
-		ray = new Ray(topPoint, directionVector);
+		ray = new Ray(topPoint.point, directionVector);
 		actualInsecPoints = sphere2.findIntersections(ray);
 		assertTrue(actualInsecPoints.size() == 1 && actualInsecPoints.contains(topPoint));
 		

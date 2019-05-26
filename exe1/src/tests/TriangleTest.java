@@ -24,14 +24,14 @@ public class TriangleTest {
 	Point vertexC = new Point(0,2,0);
 	Triangle triangle = new Triangle(vertexA, vertexB, vertexC);
 	Vector sideA = vertexA.subtract(vertexB);
-	Point pointInTriangle = new Point(0.5, 0.5, 0);
+	GeoPoint pointInTriangle = new GeoPoint(new Point(0.5, 0.5, 0), triangle) ;
 	
 	/**
 	 * Test method for a normal vector finding in Triangle {@link geometries.Triangle#getNormal(primitives.Point)}.
 	 */
 	@Test
 	public void testGetNormalPoint() {
-		assertEquals(0, (triangle.getNormal(pointInTriangle).DotProduct(sideA)), 1e-10);
+		assertEquals(0, (triangle.getNormal(pointInTriangle.point).DotProduct(sideA)), 1e-10);
 	}
 	
 	/**
@@ -55,7 +55,7 @@ public class TriangleTest {
 		/**
 		 * a case for an orthogonal ray starts right in the triangle upwards
 		 */	
-		Ray r1 = new Ray(pointInTriangle, normalToTriangleVector);
+		Ray r1 = new Ray(pointInTriangle.point, normalToTriangleVector);
 		actualInsecPoints = triangle.findIntersections(r1);
 		assertTrue(actualInsecPoints.size() == 1 && actualInsecPoints.contains(pointInTriangle));
 		
@@ -71,7 +71,7 @@ public class TriangleTest {
 		 */
 		Ray r4 = new Ray(new Point(0,0,-0.5),new Vector(0.5,0.5,0.5));
 		actualInsecPoints = triangle.findIntersections(r4);
-		assertTrue(actualInsecPoints.size() == 1 && actualInsecPoints.contains(new Point(0.5,0.5,0)));
+		assertTrue(actualInsecPoints.size() == 1 && actualInsecPoints.contains(new GeoPoint(new Point(0.5,0.5,0), triangle)));
 		
 		/**
 		 * a case that the ray is parallel with the triangle
@@ -82,7 +82,7 @@ public class TriangleTest {
 		/**
 		 * a case the ray is included in the plane - should return empty list
 		 */
-		Ray r6 = new Ray(pointInTriangle,parallelVector);
+		Ray r6 = new Ray(pointInTriangle.point, parallelVector);
 		assertTrue(triangle.findIntersections(r6).size() == 0);
 	}
 

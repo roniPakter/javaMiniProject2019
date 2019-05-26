@@ -1,23 +1,31 @@
 package geometries;
 
+import java.lang.annotation.Retention;
+
 import primitives.*;
 /**
  * Abstract class for every geometry shape
  */
 public abstract class Geometry implements Intersectable{
+	
 	/**
 	 * emission light of each geometric body
 	 */
 	protected Color _emission;
-	
+	protected Material _material;
 	// ***************** Getters/Setters ******************** //
 	/**
 	 * get the emission light of the geometric body
 	 */
 	public Color getEmission() {
-		return _emission;
+		return _emission;		
 	}
-	
+	public Material getMaterial() {
+		return _material;
+	}	
+	public void setMaterial(Material material) {
+		_material = material;
+	}
 	/**
 	 * set the emission light of the geometric body
 	 */

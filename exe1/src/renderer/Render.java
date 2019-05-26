@@ -6,6 +6,8 @@ import geometries.Intersectable.GeoPoint;
 import primitives.Color;
 import primitives.Point;
 import primitives.Ray;
+import primitives.Util;
+import primitives.Vector;
 import scene.Scene;
 
 /**
@@ -55,7 +57,7 @@ public class Render {
 		for (int i = 0; i < nX; ++i) {
 			for (int j = 0; j < nY; ++j) {
 				//create the ray that goes through the center of the current pixel
-				Ray ray = _scene.getCamera().constructRayThroughPixel(nX, nY, i, j, screenDistance, screenWidth,
+				Ray ray = _scene.getCamera().constructRayThroughPixel(nX, nY, j, i, screenDistance, screenWidth,
 						screenHeight);
 				//get all the intersection points of the ray with the model shapes
 				List<GeoPoint> intersectPoints = _scene.getGeometries().findIntersections(ray);
@@ -99,6 +101,32 @@ public class Render {
 				closest = current;
 		}
 		return closest;
+	}
+	
+	private Color calcDiffusive(double kD, Vector n, Vector l, Color iL) {
+		double lDotProductN = l.DotProduct(n);
+		if (Util.isZero(lDotProductN))
+			return Color.BLACK;
+		if (lDotProductN < 0) 
+			lDotProductN *= -1d;
+		return iL.scale(kD * lDotProductN);
+	}
+	
+	private Color calcSpecular(double kS, Vector l, Vector n, Vector v, int nShininess, Color iL) {
+		Vector r = l.substract(n.scale(l.DotProduct(n) * 2d));
+		double minusVDotProductR = v.scale(-1).DotProduct(r);
+		if (minusVDotProductR < 0 || Util.isZero(minusVDotProductR))
+			return Color.BLACK;
+		
+		if(nShininess == 0 )
+			return iL.scale(kS);
+		
+		nShininess -=1;
+		while(nShininess != 0) {
+			minusVDotProductR *=minusVDotProductR;
+			nShininess--;
+		}
+		return iL.scale(kS * minusVDotProductR);
 	}
 
 	/**

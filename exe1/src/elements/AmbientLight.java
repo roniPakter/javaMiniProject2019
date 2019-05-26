@@ -37,6 +37,7 @@ public class AmbientLight extends Light {
 	}
 
 	// ***************** Getters/Setters ********************** //
+	@Override
 	public Color getIntensity() {
 		return _intensity;
 	}
