@@ -31,7 +31,7 @@ public class TriangleTest {
 	 */
 	@Test
 	public void testGetNormalPoint() {
-		assertEquals(0, (triangle.getNormal(pointInTriangle.point).DotProduct(sideA)), 1e-10);
+		assertEquals(0, (triangle.getNormal(pointInTriangle.point).dotProduct(sideA)), 1e-10);
 	}
 	
 	/**

@@ -4,20 +4,25 @@ import primitives.Color;
 import primitives.Point;
 import primitives.Vector;
 
+/**
+ * Represents a directional light source (such as the sun)
+ */
 public class DirectionalLight extends Light implements LightSource {
-
+ 	private Vector _direction;
+	
+ // ***************** Constructors ******************** /
+ 	/**
+ 	 * Constructor for directional light with direction and color
+ 	 * @param direction
+ 	 * @param color
+ 	 */
 	public DirectionalLight(Vector direction,Color color)
 	{
 		super(color);
-		_direction = new Vector(direction);	
+		_direction = direction.normalization();	
 	}
-	public DirectionalLight(DirectionalLight directionalLight)
-	{
-		super(directionalLight._color);
-		_direction = new Vector(directionalLight._direction);
-	}
- 	private Vector _direction;
 	
+	// ***************** Operations ******************** /
 	@Override
 	public Color getIntensity(Point point) {
 		return super.getIntensity();

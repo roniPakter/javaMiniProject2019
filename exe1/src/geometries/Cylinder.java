@@ -14,6 +14,7 @@ import primitives.Vector;
 import static primitives.Util.isZero;
 
 import primitives.Color;
+import primitives.Material;
 
 /**
  * a class to represent a cylinder (a tube with a height)
@@ -32,11 +33,10 @@ public class Cylinder extends Tube {
 	public Cylinder(double radiusParm, Ray centerRayParm, double heightParm) {
 		super(radiusParm, centerRayParm);
 		height = heightParm;
-		_emission = Color.WHITE;
 	}
-	
+
 	/**
-	 * Ctor that gets the radius the center ray and the height
+	 * Ctor that gets the radius the center ray and the height and emission.
 	 * 
 	 * @param radiusParm
 	 * @param centerRayParm
@@ -44,9 +44,22 @@ public class Cylinder extends Tube {
 	 * @param emission
 	 */
 	public Cylinder(double radiusParm, Ray centerRayParm, double heightParm, Color emission) {
-		super(radiusParm, centerRayParm);
+		super(radiusParm, centerRayParm, emission);
 		height = heightParm;
-		_emission = emission;
+	}
+	
+	/**
+	 * Ctor that gets the radius the center ray and the height, emission and material
+	 * 
+	 * @param radiusParm
+	 * @param centerRayParm
+	 * @param heightParm
+	 * @param emission
+	 * @param material
+	 */
+	public Cylinder(double radiusParm, Ray centerRayParm, double heightParm, Color emission, Material material) {
+		super(radiusParm, centerRayParm, emission, material);
+		height = heightParm;
 	}
 
 	// ***************** Getters ******************** //
@@ -66,14 +79,15 @@ public class Cylinder extends Tube {
 		// p0 is the base point
 		Point p0 = centerRay.getBasePoint();
 		Vector vector = centerRay.getVector();
-		//z is the vector from the base point to p (the argument point)
+		// z is the vector from the base point to p (the argument point)
 		Vector z = p.subtract(p0);
 		// t is the scalar to go to the point on the center ray
-		double t = centerRay.getVector().DotProduct(z);
-		//if the projection of z on the ray is 0 : p is on the bottom of the cylinder
+		double t = centerRay.getVector().dotProduct(z);
+		// if the projection of z on the ray is 0 : p is on the bottom of the cylinder
 		if (isZero(t))
 			return vector.scale(-1);
-		//if the projection is the height of the cylinder: p is on the upper base of the cylinder
+		// if the projection is the height of the cylinder: p is on the upper base of
+		// the cylinder
 		if (isZero(t - height))
 			return vector;
 		Vector projectionVector = centerRay.getVector().scale(t);

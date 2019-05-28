@@ -27,7 +27,7 @@ public class Camera {
 	 * @param upDirection
 	 */
 	public Camera(Point position, Vector toDirection, Vector upDirection) {
-		double orthogonalCheck = toDirection.DotProduct(upDirection);
+		double orthogonalCheck = toDirection.dotProduct(upDirection);
 		// in case the vector of up and to are not orthogonal - exception
 		if (!Util.isZero(orthogonalCheck))
 			throw new IllegalArgumentException("vTo and vUp are not orthogonal");

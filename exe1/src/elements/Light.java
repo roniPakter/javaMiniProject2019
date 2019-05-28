@@ -2,22 +2,28 @@ package elements;
 
 import primitives.Color;
 
+/**
+ * Abstract class for every kind of light
+ */
 public abstract class Light {
-	protected Color _color;
+	/** the original color and strength of the light*/
+	protected Color _i0;
 
-	public Light() {
-		_color = Color.WHITE;
-	}
-
+	// ***************** Constructors ******************** //
+	/**
+	 * Constructor gets the color of the light to be the I0 
+	 * @param color
+	 */
 	public Light(Color color) {
-		_color = color;
+		_i0 = color;
 	}
 
+	// ***************** Operations ******************** //
 	/**
 	 * Return I0 - original light intensity color
 	 * @return I0
 	 */
 	public Color getIntensity() {
-		return _color;
+		return _i0;
 	}
 }

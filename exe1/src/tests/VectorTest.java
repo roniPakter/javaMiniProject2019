@@ -90,12 +90,12 @@ public class VectorTest
 	}
 
 	/**
-	 * Test method for {@link primitives.Vector#DotProduct(primitives.Vector)}.
+	 * Test method for {@link primitives.Vector#dotProduct(primitives.Vector)}.
 	 */
 	@Test
 	public void testDotProduct() {
-		assertEquals(0.0, vector1.DotProduct(new Vector(3, 0, -3)), 1e-10);
-		assertEquals(18.0 ,vector1.DotProduct(vector2), 1e-10);
+		assertEquals(0.0, vector1.dotProduct(new Vector(3, 0, -3)), 1e-10);
+		assertEquals(18.0 ,vector1.dotProduct(vector2), 1e-10);
 	}
 
 	/**

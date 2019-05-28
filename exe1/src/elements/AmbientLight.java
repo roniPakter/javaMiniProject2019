@@ -6,7 +6,7 @@ package elements;
 import primitives.Color;
 
 /**
- * represents a light for defualt state without light sorce
+ * represents a light for default state without any light source
  */
 public class AmbientLight extends Light {
 	
@@ -32,7 +32,7 @@ public class AmbientLight extends Light {
 	 * @param ambientLight
 	 */
 	public AmbientLight(AmbientLight ambientLight) {
-		 super(ambientLight._color);
+		 super(ambientLight._i0);
 		_intensity = new Color(ambientLight.getIntensity());
 	}
 
@@ -48,7 +48,7 @@ public class AmbientLight extends Light {
 	 */
 	@Override
 	public String toString() {
-		return "Ia = " + _color + ", Ka = " + _kA + ", Intensity = " + _intensity;
+		return "Ia = " + _i0 + ", Ka = " + _kA + ", Intensity = " + _intensity;
 	}
 
 }

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import primitives.Color;
+import primitives.Material;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Util;
@@ -34,9 +35,8 @@ public class Sphere extends RadialGeometries {
 	public Sphere(double radiusParm, Point centerParm) {
 		super(radiusParm);
 		centerPoint = new Point(centerParm);
-		_emission = Color.WHITE;
 	}
-	
+
 	/**
 	 * Ctor with radius and center ray and color
 	 * 
@@ -45,9 +45,21 @@ public class Sphere extends RadialGeometries {
 	 * @param emission
 	 */
 	public Sphere(double radiusParm, Point centerParm, Color emission) {
-		super(radiusParm);
+		super(radiusParm, emission, Material.NULL_MATERIAL);
 		centerPoint = new Point(centerParm);
-		_emission = emission;
+	}
+	
+	/**
+	 * Ctor with radius and center ray and color and material
+	 * 
+	 * @param radiusParm
+	 * @param centerParm
+	 * @param emission
+	 * @param material
+	 */
+	public Sphere(double radiusParm, Point centerParm, Color emission, Material material) {
+		super(radiusParm, emission, material);
+		centerPoint = new Point(centerParm);
 	}
 
 	// ***************** Getters ******************** //
@@ -76,13 +88,13 @@ public class Sphere extends RadialGeometries {
 		Vector v = ray.getVector();
 
 		if (o.equals(p0)) {
-			intersectPoints.add(new GeoPoint( p0.addVector(v.scale(radius)), this));
+			intersectPoints.add(new GeoPoint(p0.addVector(v.scale(radius)), this));
 			return intersectPoints;
 		}
 		// the vector goes from the ray base to the sphere center
 		Vector u = o.subtract(p0);
 		// the length of the projection of u on the ray
-		double tm = v.DotProduct(u);
+		double tm = v.dotProduct(u);
 		// the shortest distance from the sphere center to the ray
 		double d = Math.sqrt(u.squaredLength() - (tm * tm));
 

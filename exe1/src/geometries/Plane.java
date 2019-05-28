@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import primitives.Color;
+import primitives.Material;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Util;
@@ -26,12 +27,13 @@ public class Plane extends Geometry {
 
 	// ***************** Constructors ******************** //
 	/**
-	 * cotr with a point and a normal vector 
+	 * cotr with a point and a normal vector
+	 * 
 	 * @param pointParm
 	 * @param normalParm
 	 */
 	public Plane(Point pointParm, Vector normalParm) {
-		_emission = Color.WHITE;
+		super();
 		point = new Point(pointParm);
 		normalVector = (new Vector(normalParm)).normalization();
 	}
@@ -45,21 +47,23 @@ public class Plane extends Geometry {
 	 * @param emission
 	 */
 	public Plane(Point point1, Point point2, Point point3, Color emission) {
-		//should we put "new" on this?
-		_emission = emission;
+		// should we put "new" on this?
+		super(emission, Material.NULL_MATERIAL);
 		Vector a = point2.subtract(point1);
 		Vector b = point3.subtract(point1);
 		normalVector = a.crossProduct(b).normalization();
 		point = new Point(point1);
 	}
+
 	/**
 	 * cotr with a point and a normal vector and color
+	 * 
 	 * @param pointParm
 	 * @param normalParm
 	 * @param emission
 	 */
 	public Plane(Point pointParm, Vector normalParm, Color emission) {
-		_emission = emission;
+		super(emission, Material.NULL_MATERIAL);
 		point = new Point(pointParm);
 		normalVector = (new Vector(normalParm)).normalization();
 	}
@@ -72,7 +76,38 @@ public class Plane extends Geometry {
 	 * @param point3
 	 */
 	public Plane(Point point1, Point point2, Point point3) {
-		_emission = Color.WHITE;
+		super();
+		Vector a = point2.subtract(point1);
+		Vector b = point3.subtract(point1);
+		normalVector = a.crossProduct(b).normalization();
+		point = new Point(point1);
+	}
+	
+	/**
+	 * cotr with a point and a normal vector and color and material
+	 * 
+	 * @param pointParm
+	 * @param normalParm
+	 * @param emission
+	 * @param material
+	 */
+	public Plane(Point pointParm, Vector normalParm, Color emission, Material material) {
+		super(emission, material);
+		point = new Point(pointParm);
+		normalVector = (new Vector(normalParm)).normalization();
+	}
+	
+	/**
+	 * Ctor with three points and color and material
+	 * 
+	 * @param point1
+	 * @param point2
+	 * @param point3
+	 * @param emission
+	 * @param material
+	 */
+	public Plane(Point point1, Point point2, Point point3, Color emission, Material material) {
+		super(emission, material);
 		Vector a = point2.subtract(point1);
 		Vector b = point3.subtract(point1);
 		normalVector = a.crossProduct(b).normalization();
@@ -81,18 +116,18 @@ public class Plane extends Geometry {
 
 	// ***************** Getters ******************** //
 	/**
-	 *get a point that is in the plane
+	 * get a point that is in the plane
 	 */
 	public Point getPoint() {
 		return point;
 	}
-	
+
 	/**
 	 * get a normalized vector that is orthogonal to the plane
 	 */
 	public Vector getNormal() {
 		return normalVector;
-	}	
+	}
 
 	// ***************** Administration ******************** //
 	@Override
@@ -112,29 +147,30 @@ public class Plane extends Geometry {
 	@Override
 	public List<GeoPoint> findIntersections(Ray ray) {
 		List<GeoPoint> list;
-		//in case the ray is included in the plane or parallel to it: empty list
-		if (Util.isZero(normalVector.DotProduct(ray.getVector())))
+		// in case the ray is included in the plane or parallel to it: empty list
+		if (Util.isZero(normalVector.dotProduct(ray.getVector())))
 			return EMPTY_LIST;
-		//in case (rare...) the base point is the representing point of the plane: add it.
-		if(point.equals(ray.getBasePoint())) {
+		// in case (rare...) the base point is the representing point of the plane: add
+		// it.
+		if (point.equals(ray.getBasePoint())) {
 			list = new ArrayList<GeoPoint>();
 			list.add(new GeoPoint(ray.getBasePoint(), this));
 			return list;
 		}
-		
-		//t is the coefficient of the 
-		double t= point.subtract(ray.getBasePoint()).DotProduct(normalVector)
-				/ normalVector.DotProduct(ray.getVector());
-		if(t< 0)
+
+		// t is the coefficient of the
+		double t = point.subtract(ray.getBasePoint()).dotProduct(normalVector)
+				/ normalVector.dotProduct(ray.getVector());
+		if (t < 0)
 			return EMPTY_LIST;
 		if (Util.isZero(t)) {
-			list  = new ArrayList<GeoPoint>();
+			list = new ArrayList<GeoPoint>();
 			list.add(new GeoPoint(ray.getBasePoint(), this));
 			return list;
 		}
-			
+
 		Point p = new Point(ray.getBasePoint().addVector(ray.getVector().scale(t)));
-		list  = new ArrayList<GeoPoint>();
+		list = new ArrayList<GeoPoint>();
 		list.add(new GeoPoint(p, this));
 		return list;
 	}

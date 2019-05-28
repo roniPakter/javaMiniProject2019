@@ -14,7 +14,9 @@ import java.util.IllegalFormatFlagsException;
  * A class represents a vector in 3D space
  */
 public class Vector {
+	/** Vector (0, 0, 1)*/
 	public final static Vector Z_AXIS = new Vector(0, 0, 1);
+	/** Vector (0, -1, 0)*/
 	public final static Vector NEGATIVE_Y_AXIS = new Vector(0, -1, 0);
 	
 	private Point vector;
@@ -98,7 +100,7 @@ public class Vector {
 	 * @param multiplicand
 	 * @return a new vector made of (this * multiplicand vector)
 	 */
-	public double DotProduct(Vector multiplicand) {
+	public double dotProduct(Vector multiplicand) {
 		return (vector.getX().scale(multiplicand.vector.getX().get()).get()
 				+ vector.getY().scale(multiplicand.vector.getY().get()).get()
 				+ vector.getZ().scale(multiplicand.vector.getZ().get()).get());

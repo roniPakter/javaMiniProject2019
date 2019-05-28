@@ -1,5 +1,7 @@
  package scene;
 
+import java.util.List;
+
 import elements.*;
 import primitives.Color;
 import geometries.*;
@@ -15,6 +17,8 @@ public class Scene {
 	Color _background;
 	/** the ambient light for default light of objects (color,intensity factor) */
 	AmbientLight _ambientLight;
+	/** list of the light sources of the scene */
+	List<LightSource> _lights;
 	/** a collection of geometric bodies creating a 3D model of the scene*/
 	Geometries _geometriesModel;
 	/** the camera shoots the picture of the scene*/
@@ -29,6 +33,7 @@ public class Scene {
 	public Scene(String sceneName) {
 		_sceneName = sceneName;
 		_geometriesModel = new Geometries();
+		_lights = LightSource.EMPTY_LIST;
 	}
 
 	// ***************** Setters ********************** //
@@ -65,6 +70,17 @@ public class Scene {
 	public void setCameraAndDistance(double screenDistance, Camera camera) {
 		_screenDistance = screenDistance;
 		_camera = new Camera(camera.getP0(), camera.getToVector(), camera.getUpVector());
+	}
+	
+	/**
+	 * sets the light of the scene (clearing former lights)
+	 * @param lights
+	 */
+	public void setLights(LightSource... lights) {
+		_lights.clear();
+		for (LightSource lightSource : lights) {
+			_lights.add(lightSource);
+		}
 	}
 
 	// ***************** Getters ********************** //
@@ -110,6 +126,13 @@ public class Scene {
 	public double getScreenDistance() {
 		return _screenDistance;
 	}
+	
+	/**
+	 * @return the list of the light sources in the scene
+	 */
+	public List<LightSource> getLights() {
+		return _lights;
+	}
 	// ***************** Administration ********************** //
 	
 	/**
@@ -131,8 +154,18 @@ public class Scene {
 	 * Add a shape or collection of shapes to the scene
 	 * @param shapes
 	 */
-	public void setGeometries(Intersectable... shapes) {
+	public void addGeometries(Intersectable... shapes) {
 		_geometriesModel.add(shapes);
+	}
+	
+	/**
+	 * Add a light source or collection of lights to the scene
+	 * @param lights
+	 */
+	public void addLights(LightSource... lights) {
+		for (LightSource lightSource : lights) {
+			_lights.add(lightSource);
+		}
 	}
 
 }

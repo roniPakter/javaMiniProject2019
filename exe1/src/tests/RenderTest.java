@@ -3,6 +3,9 @@ package tests;
 import org.junit.Test;
 import elements.AmbientLight;
 import elements.Camera;
+import elements.DirectionalLight;
+import elements.PointLight;
+import elements.SpotLight;
 import geometries.*;
 import primitives.*;
 import renderer.ImageWriter;
@@ -13,55 +16,182 @@ import scene.Scene;
  * test for the render class
  */
 public class RenderTest {
-	Vector xAxisVector = new Vector(1,0,0);
 	Scene scene = new Scene("Test scene");
 	ImageWriter imageWriter = new ImageWriter("test0", 500, 500, 500, 500);
 	Render render = new Render(imageWriter, scene);
-	Camera camera = new Camera(new Point(0,0,0),  Vector.Z_AXIS, Vector.NEGATIVE_Y_AXIS);
-	
+	Camera camera = new Camera(new Point(0, 0, 0), Vector.Z_AXIS, Vector.NEGATIVE_Y_AXIS);
+	Material m = new Material(0.5, 0.5, 7);
+
 	/**
-	 * test the actual rendering of an image
+	 * test the actual rendering of a colored image - sphere and four triangles
 	 */
 	@Test
-	public void basicRendering(){
-		
+	public void basicRendering() {
 		scene.setCameraAndDistance(150, camera);
 		scene.setBackground(Color.BLACK);
 		scene.setAmbientLight(new AmbientLight(new Color(100, 100, 100), 0.3));
 		Geometries geometries = new Geometries();
-		scene.setGeometries(geometries);
-		//add a sphere to the model
-		geometries.add(new Sphere(50, new Point(0, 0, 150), new Color(200,120,0)));
-		
-		//add 4 triangles to the model
-		//
-		geometries.add(new Triangle(new Point( 100, 0, 149),
-				 					new Point(  0, 100, 149),
-				 					new Point( 100, 100, 149),
-				 					new Color(70,0,230)));
-		
-		geometries.add(new Triangle(new Point( 100, 0, 149),
-				 			 		new Point(  0, -100, 149),
-				 			 		new Point( 100,-100, 149),
-				 					new Color(230,0,0)));
-		
-		geometries.add(new Triangle(new Point(-100, 0, 149),
-				 					new Point(  0, 100, 149),
-				 					new Point(-100, 100, 149),
-				 					Color.BLACK));
+		scene.addGeometries(geometries);
+		// add a sphere to the model
+		geometries.add(new Sphere(50, new Point(0, 0, 150), new Color(100, 20, 0), m));
 
-		geometries.add(new Triangle(new Point(-100, 0, 149),
-				 			 		new Point(  0,  -100, 149),
-				 			 		new Point(-100, -100, 149),
-				 					new Color(0,255,30)));
+		// add 4 triangles to the model
+		// blue triangle (on the right bottom)
+		geometries.add(new Triangle(new Point(100, 0, 149), new Point(0, 100, 149), new Point(100, 100, 149),
+				new Color(20, 0, 130), m));
+
+		// red triangle (on the right upper corner)
+		geometries.add(new Triangle(new Point(100, 0, 149), new Point(0, -100, 149), new Point(100, -100, 149),
+				new Color(130, 0, 0), m));
+
+		// black triangle (on the left bottom)
+		geometries.add(
+				new Triangle(new Point(-100, 0, 149), new Point(0, 100, 149), new Point(-100, 100, 149), Color.BLACK));
+
+		// green triangle (on the left upper corner)
+		geometries.add(new Triangle(new Point(-100, 0, 149), new Point(0, -100, 149), new Point(-100, -100, 149),
+				new Color(0, 155, 30)));
+
+		scene.setLights(new PointLight(new Color(255, 100, 100), new Point(0, -100, 50), 1, 0.00001, 0.00001));
 
 		render.renderImage();
-		//add a grid
+		// add a grid
 		render.printGrid(50, Color.WHITE);
-		//write the final image
+		// write the final image
+		render.writeToImage();
+		
+	}
+
+	@Test
+	public void spotLightTest() {
+		scene.setCameraAndDistance(100, camera);
+		scene.setBackground(Color.BLACK);
+		scene.setAmbientLight(new AmbientLight(new Color(100, 100, 100), 0.3));
+		Sphere sphere = new Sphere(800, new Point(0.0, 0.0, 1000), new Color(0, 0, 100));
+		Material m = new Material(0.5, 0.5, 6);
+		sphere.setMaterial(m);
+		scene.addGeometries(sphere);
+		scene.setLights(new SpotLight(new Vector(2, 2, 3), new Color(255, 100, 100), new Point(-200, -200, 100), 
+				    1, 0.00001, 0.000005));
+		scene.addLights(new DirectionalLight(new Vector(-2, 2, 3), new Color(255, 100, 100)));
+		scene.addLights(new PointLight(new Color(255, 100, 100), new Point(-200, 200, 100), 1, 0.0001, 0.000005));
+
+		ImageWriter imageWriter = new ImageWriter("Spot-point-direct on sphere test", 500, 500, 500, 500);
+
+		Render render = new Render(imageWriter, scene);
+
+		render.renderImage();
+		// write the final image
 		render.writeToImage();
 	}
 	
+	
+
+	@Test
+	public void spotLightTestTriangles() {
+		scene.setCameraAndDistance(100, camera);
+		scene.setBackground(Color.BLACK);
+		scene.setAmbientLight(new AmbientLight(new Color(100, 100, 100), 0.3));
+
+		Triangle triangle = new Triangle(
+				new Point(3500, 3500, 1000), 
+				new Point(-3500, -3500, 2000),
+				new Point(3500, -3500, 1000), 
+				Color.BLACK,
+				m);
+
+		Triangle triangle2 = new Triangle(
+				new Point(3500, 3500, 1000), 
+				new Point(-3500, 3500, 1000),
+				new Point(-3500, -3500, 2000), 
+				Color.BLACK,
+				m);
+
+		scene.addGeometries(triangle);
+		scene.addGeometries(triangle2);
+
+		scene.setLights(new SpotLight(new Vector(-2, 2, 3), new Color(255, 100, 100), new Point(200, -200, 100), 0, 0.000001, 0.0000005));
+
+		ImageWriter imageWriter = new ImageWriter("Spot test 2", 500, 500, 500, 500);
+
+		Render render = new Render(imageWriter, scene);
+
+		render.renderImage();
+		// write the final image
+		render.writeToImage();
+		
+	}
+	
+	@Test
+	public void directionalLightTestTriangles() {
+		scene.setCameraAndDistance(100, camera);
+		scene.setBackground(Color.BLACK);
+		scene.setAmbientLight(new AmbientLight(new Color(100, 100, 100), 0.3));
+
+		Triangle triangle = new Triangle(
+				new Point(3500, 3500, 1000), 
+				new Point(-3500, -3500, 2000),
+				new Point(3500, -3500, 1000), 
+				Color.BLACK,
+				m);
+
+		Triangle triangle2 = new Triangle(
+				new Point(3500, 3500, 1000), 
+				new Point(-3500, 3500, 1000),
+				new Point(-3500, -3500, 2000), 
+				Color.BLACK,
+				m);
+
+		scene.addGeometries(triangle);
+		scene.addGeometries(triangle2);
+
+		scene.setLights(new DirectionalLight(new Vector(-2, 2, 3), new Color(255, 100, 100)));
+
+		ImageWriter imageWriter = new ImageWriter("Directional Light test 2", 500, 500, 500, 500);
+
+		Render render = new Render(imageWriter, scene);
+
+		render.renderImage();
+		// write the final image
+		render.writeToImage();
+		
+	}
+	
+	@Test
+	public void pointLightTestTriangles() {
+		scene.setCameraAndDistance(100, camera);
+		scene.setBackground(Color.BLACK);
+		scene.setAmbientLight(new AmbientLight(new Color(100, 100, 100), 0.3));
+
+		Triangle triangle = new Triangle(
+				new Point(3500, 3500, 1000), 
+				new Point(-3500, -3500, 2000),
+				new Point(3500, -3500, 1000), 
+				Color.BLACK,
+				m);
+
+		Triangle triangle2 = new Triangle(
+				new Point(3500, 3500, 1000), 
+				new Point(-3500, 3500, 1000),
+				new Point(-3500, -3500, 2000), 
+				Color.BLACK,
+				m);
+
+		scene.addGeometries(triangle);
+		scene.addGeometries(triangle2);
+
+		scene.setLights(new PointLight(new Color(255, 100, 100), new Point(200, -200, 100), 0, 0.000001, 0.0000005));
+
+		ImageWriter imageWriter = new ImageWriter("Point test 2", 500, 500, 500, 500);
+
+		Render render = new Render(imageWriter, scene);
+
+		render.renderImage();
+		// write the final image
+		render.writeToImage();
+		
+	}
+
 //	@Test
 //	public void closestPointTest(){
 //		scene.setCameraAndDistance(100, camera);

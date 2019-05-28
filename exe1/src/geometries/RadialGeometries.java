@@ -7,6 +7,8 @@
  * Exercise 2
  */
 package geometries;
+import primitives.Color;
+import primitives.Material;
 import primitives.Util;
 
 /**
@@ -17,6 +19,15 @@ abstract class RadialGeometries extends Geometry{
 
 	// ***************** Constructor ******************** //
 	public RadialGeometries(double radiusParm) {
+		super();
+		//check if the radius is zero or negative
+		if(radiusParm <= 0 || Util.isZero(radiusParm))
+			throw new IllegalArgumentException("ERROR! Radius must be a positive number");
+		radius = radiusParm;
+	}
+	
+	public RadialGeometries(double radiusParm, Color color, Material material) {
+		super(color, material);
 		//check if the radius is zero or negative
 		if(radiusParm <= 0 || Util.isZero(radiusParm))
 			throw new IllegalArgumentException("ERROR! Radius must be a positive number");

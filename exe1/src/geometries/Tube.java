@@ -9,6 +9,7 @@
 package geometries;
 
 import primitives.Color;
+import primitives.Material;
 import primitives.Point;
 import primitives.Ray;
 import primitives.Vector;
@@ -31,7 +32,6 @@ public class Tube extends RadialGeometries {
 	public Tube(double radiusParm, Ray centerRayParm) {
 		super(radiusParm);
 		centerRay = new Ray(centerRayParm);
-		_emission = Color.WHITE;
 	}
 	
 	/**
@@ -41,9 +41,20 @@ public class Tube extends RadialGeometries {
 	 * @param emission
 	 */
 	public Tube(double radiusParm, Ray centerRayParm, Color emission) {
-		super(radiusParm);
+		super(radiusParm, emission, Material.NULL_MATERIAL);
 		centerRay = new Ray(centerRayParm);
-		_emission = emission;
+	}
+	
+	/**
+	 * Cotr with the radius and the center ray and color and material
+	 * @param radiusParm
+	 * @param centerRayParm
+	 * @param emission
+	 * @param material
+	 */
+	public Tube(double radiusParm, Ray centerRayParm, Color emission, Material material) {
+		super(radiusParm, emission, material);
+		centerRay = new Ray(centerRayParm);
 	}
 	
 	// ***************** Getters ******************** //
@@ -65,7 +76,7 @@ public class Tube extends RadialGeometries {
 		//z is the vector from the base point to p (the argument point)
 		Vector z = p.subtract(p0);
 		//t is the scalar to go to the point on the center ray
-		double t = centerRay.getVector().DotProduct(z);
+		double t = centerRay.getVector().dotProduct(z);
 		if (isZero(t))
 			return z.normalization();
 		//scaling the center vector by t gives the projection of z on the center vector

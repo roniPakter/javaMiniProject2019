@@ -29,7 +29,7 @@ public class PlaneTest {
 		//check the normal length is 1
 		assertEquals(1, p1.getNormal().length(), 1e-10);	
 		//check the normal dot product with a vector included in the plane is zero
-		assertEquals(0 ,p1.getNormal().DotProduct(new Vector(pointInPlane)) , 1e-10);
+		assertEquals(0 ,p1.getNormal().dotProduct(new Vector(pointInPlane)) , 1e-10);
 	}
 	/**
 	 * Test method for a ray intersection finding in Plane {@link geometries.Plane#testFindIntersections(primitives.Ray)}.

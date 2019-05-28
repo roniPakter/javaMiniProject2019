@@ -11,6 +11,18 @@ public abstract class Geometry implements Intersectable{
 	/**the material the of the geometric body*/
 	protected Material _material;
 	
+	// ***************** Constructor ******************** //
+	
+	public Geometry() {
+		_emission = Color.WHITE;
+		_material = Material.NULL_MATERIAL;
+	}
+	
+	public Geometry(Color emission, Material material) {
+		_emission = emission;
+		_material = material;
+	}
+	
 	// ***************** Getters ******************** //
 	/**
 	 * get the emission light of the geometric body
@@ -48,5 +60,5 @@ public abstract class Geometry implements Intersectable{
 	 * @param point
 	 * @return a new vector normalized and vertical to the given point
 	 */
-	abstract Vector getNormal(Point point);
+	public abstract Vector getNormal(Point point);
 }

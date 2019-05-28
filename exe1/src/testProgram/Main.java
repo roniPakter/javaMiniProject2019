@@ -58,7 +58,7 @@ public class Main {
 			System.out.println("Scale multiplication:\n" + vector1.scale(6.0));
 			System.out.println("Cross product:\n" + vector1.crossProduct(vector2));
 			System.out.println("Normalization:\n" + vector2.normalization());
-			System.out.println("Dot Product:\n" + vector2.DotProduct(vector2));
+			System.out.println("Dot Product:\n" + vector2.dotProduct(vector2));
 			System.out.println("norm:\n" + vector2.normalization().length());
 		}
 		
