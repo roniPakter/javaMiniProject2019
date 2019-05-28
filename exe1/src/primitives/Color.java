@@ -15,7 +15,9 @@ public class Color {
 	 */
 	double _r = 0.0, _g = 0.0, _b = 0.0;
 
+	/** RGB = (0, 0, 0)*/
 	public final static Color BLACK = new Color();
+	/** RGB = (255, 255, 255)*/
 	public final static Color WHITE = new Color(255, 255, 255);
 
 	/**

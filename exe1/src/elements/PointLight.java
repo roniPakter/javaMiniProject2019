@@ -40,7 +40,7 @@ public class PointLight extends Light implements LightSource{
 		//Il = I0 / (Kc + Kl * (distance from light to point) + Kq * (distance^2 from ligth to point))
 		double distance = point.distance(_pL);
 		double denominator = _kc + _kl * distance +_kq * (distance * distance);
-		return _i0.scale(1d/denominator);
+		return _i0.reduce(denominator);
 	}
 	
 	@Override

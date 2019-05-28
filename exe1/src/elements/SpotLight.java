@@ -32,7 +32,8 @@ public class SpotLight extends PointLight {
 	public Color getIntensity(Point point) {
 		Vector l = point.subtract(_pL).normalization();
 		double dirDotProductL = _dir.dotProduct(l);
-		if (dirDotProductL < 0 || Util.isZero(dirDotProductL))
+		dirDotProductL = Util.alignZero(dirDotProductL);
+		if (dirDotProductL <= 0)
 			return Color.BLACK;
 		return super.getIntensity(point).scale(dirDotProductL);
 	}
