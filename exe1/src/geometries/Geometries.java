@@ -8,14 +8,14 @@ import primitives.Ray;
  * Represents a collection of geometry shapes in the space
  */
 public class Geometries implements Intersectable {
-	List<Intersectable> geometriesList;
+	List<Intersectable> _geometriesList;
 	
 	// ***************** Constructors ******************** //
 	/**
 	 * Ctor for initializing an empty collection
 	 */
 	public Geometries() {
-		geometriesList  = new ArrayList<Intersectable>();
+		_geometriesList  = new ArrayList<Intersectable>();
 	}
 
 	/**
@@ -23,9 +23,9 @@ public class Geometries implements Intersectable {
 	 * @param paramShapesList
 	 */
 	public Geometries(Intersectable... paramShapesList) {
-		geometriesList = new ArrayList<Intersectable>();
+		_geometriesList = new ArrayList<Intersectable>();
 		for (Intersectable paramShape : paramShapesList) {
-			geometriesList.add(paramShape);
+			_geometriesList.add(paramShape);
 		}
 	}
 	
@@ -36,7 +36,7 @@ public class Geometries implements Intersectable {
 	 */
 	public void add(Intersectable... paramShapesList) {
 		for (Intersectable paramShape : paramShapesList) {
-			geometriesList.add(paramShape);
+			_geometriesList.add(paramShape);
 		}
 	}
 	
@@ -45,11 +45,19 @@ public class Geometries implements Intersectable {
 	 */
 	@Override
 	public List<GeoPoint> findIntersections(Ray ray) {
+		//todo yeeool
 		List<GeoPoint> intersectList = new ArrayList<GeoPoint>();
-		for (Intersectable intersectable : geometriesList) {
+		for (Intersectable intersectable : _geometriesList) {
 			intersectList.addAll(intersectable.findIntersections(ray));
 		}
 		return intersectList;
+	}
+	
+	/**
+	 * clear the list of geometries to be empty
+	 */
+	public void clear() {
+		_geometriesList.clear();
 	}
 	
 	// ***************** Administrations ******************** //
@@ -58,8 +66,8 @@ public class Geometries implements Intersectable {
 	 */
 	@Override
 	public String toString() {
-		String resultString = "Collection size: " + geometriesList.size() + "\n";
-		for(Intersectable shape : geometriesList) {
+		String resultString = "Collection size: " + _geometriesList.size() + "\n";
+		for(Intersectable shape : _geometriesList) {
 			resultString += "\n" + shape.toString(); 
 		}
 		return resultString;

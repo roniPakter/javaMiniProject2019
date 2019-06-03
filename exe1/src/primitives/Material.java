@@ -4,13 +4,17 @@ package primitives;
  * Represents a material the geometric body is made of holds the factors of the
  * light return from the material
  */
-public class Material {
+public class Material {	
 	/**factor for the diffusive light returned by the material*/
 	private double _kD;
 	/**factor for the specular reflection returned by the material*/
 	private double _kS;
 	/**factor for the shininess of the material (dealed as integer)*/
 	private int _nShininess;
+	/**factor for mirror reflection*/
+	private double _kR;
+	/**factor for transparency*/
+	private double _kT;
 
 	public final static Material NULL_MATERIAL = new Material();
 //***************** Getters/Setters ******************** //
@@ -55,6 +59,14 @@ public class Material {
 	 */
 	public int getNShininess() {
 		return _nShininess;
+	}
+
+	public double getKr() {
+		return _kR;
+	}
+
+	public double getKt() {
+		return _kT;
 	}
 
 }

@@ -91,6 +91,7 @@ public class Sphere extends RadialGeometries {
 			intersectPoints.add(new GeoPoint(p0.addVector(v.scale(radius)), this));
 			return intersectPoints;
 		}
+		
 		// the vector goes from the ray base to the sphere center
 		Vector u = o.subtract(p0);
 		// the length of the projection of u on the ray
@@ -108,10 +109,12 @@ public class Sphere extends RadialGeometries {
 		// intersection points.
 		double th = Math.sqrt((radius * radius) - (d * d));
 
-		if ((tm + th) > 0 && !Util.isZero(tm + th))
-			intersectPoints.add(new GeoPoint(p0.addVector(v.scale(tm + th)), this));
-		if ((tm - th) > 0 && !Util.isZero(tm - th))
-			intersectPoints.add(new GeoPoint(p0.addVector(v.scale(tm - th)), this));
+		double tmPlusTh = Util.alignZero(tm + th);
+		if (tmPlusTh > 0)
+			intersectPoints.add(new GeoPoint(p0.addVector(v.scale(tmPlusTh)), this));
+		double tmMinusTh = Util.alignZero(tm - th);
+		if (tmMinusTh > 0)
+			intersectPoints.add(new GeoPoint(p0.addVector(v.scale(tmMinusTh)), this));
 		// if the distance is radius then the only intersection is the point of (tm * v)
 		if (Util.isZero(Util.usubtract(d, radius)) && !(Util.isZero(tm)) && tm > 0) {
 			intersectPoints.add(new GeoPoint(p0.addVector(v.scale(tm)), this));

@@ -82,6 +82,17 @@ public class Scene {
 			_lights.add(lightSource);
 		}
 	}
+	
+	/**
+	 * sets the geometric bodies of the scene (clearing former geometries)
+	 * @param geometries - one or more geometric body
+	 */
+	public void setGeometries(Intersectable...geometries ) {
+		_geometriesModel.clear();
+		for (Intersectable geometry : geometries) {
+			_geometriesModel.add(geometry);
+		}
+	}
 
 	// ***************** Getters ********************** //
 	
