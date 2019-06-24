@@ -25,6 +25,7 @@ public final class Coordinate {
 	public Coordinate(Coordinate other) {
 		_coord = other._coord;
 	}
+	
 
 	/************** Getters/Setters *******/
 	public double get() {

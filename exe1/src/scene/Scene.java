@@ -25,15 +25,21 @@ public class Scene {
 	Camera _camera;
 	/**the distance of the view-plane from the camera lens*/
 	double _screenDistance;
-
+	/**the distance of the focus-plane from the camera lens - determines how close would be an in-focus object*/
+	double _focusLength;
+	/**the size of the camera aperture - determines how blur the object not in focus would be (zero by default)*/
+	double _apertureSize;
+	/**the size of rayBeam - determines how smooth blur the object not in focus would be*/
+	int _rayBeamSize;
 	// ***************** Constructors ********************** //
-	/**ctor for a scene with only scene name
+	/**ctor for a scene with only scene name 
 	 * @param sceneName
 	 */
 	public Scene(String sceneName) {
 		_sceneName = sceneName;
 		_geometriesModel = new Geometries();
 		_lights = LightSource.EMPTY_LIST;
+		_apertureSize = 0;
 	}
 
 	// ***************** Setters ********************** //
@@ -93,6 +99,30 @@ public class Scene {
 			_geometriesModel.add(geometry);
 		}
 	}
+	
+	/**
+	 * set the focus length of the scene - how far the focused objects would be
+	 * @param focusLength
+	 */
+	public void setFocusLength(double focusLength) {
+		_focusLength = focusLength;
+	}
+	
+	/**
+	 * set the aperture of the scene - how blur the unfocused objects would be
+	 * @param focusLength
+	 */
+	public void setApertureSize(double apertureSize) {
+		_apertureSize = apertureSize;
+	}
+	
+	/**
+	 * set the amount of ray generated for the blur of the unfocused objects
+	 * @param rayBeamSize 
+	 */
+	public void setRayBeamSize(int rayBeamSize) {
+		_rayBeamSize = rayBeamSize;
+	}
 
 	// ***************** Getters ********************** //
 	
@@ -102,7 +132,20 @@ public class Scene {
 	public String getSceneName() {
 		return _sceneName;
 	}
-
+	
+	/**
+	 * @return aperture size - how blur the unfocused objects are
+	 */
+	public double getApertureSize() {
+	return _apertureSize;
+	}
+	
+	/**
+	 * @return focus length of the scene - how far the focused objects would be
+	 */
+	public double getFocusLength() {
+		return _focusLength;
+	}
 	/**
 	 * @return the color of the scene's background
 	 */
@@ -144,6 +187,15 @@ public class Scene {
 	public List<LightSource> getLights() {
 		return _lights;
 	}
+	
+	/**
+	 * 
+	 * @return the amount of rays for the unfocused blur
+	 */
+	public int getRayBeamSize() {
+		return _rayBeamSize;
+	}
+
 	// ***************** Administration ********************** //
 	
 	/**

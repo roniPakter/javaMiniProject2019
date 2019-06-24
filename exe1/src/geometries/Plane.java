@@ -10,7 +10,6 @@ package geometries;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import primitives.Color;
 import primitives.Material;
 import primitives.Point;

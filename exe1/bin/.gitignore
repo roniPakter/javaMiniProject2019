@@ -1,7 +1,4 @@
-/elements/
-/primitives/
-/scene/
-/geometries/
 /renderer/
 /tests/
-/testProgram/
+/elements/
+/primitives/

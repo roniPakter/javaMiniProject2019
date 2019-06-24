@@ -8,9 +8,12 @@
  */
 package primitives;
 
+import java.util.Random;
+
 public abstract class Util {
 	// It is binary, equivalent to ~1/1,000,000,000,000 in decimal (12 digits)
 	private static final int ACCURACY = -40;
+	private static Random rand = new Random();
 
 	// double store format (bit level): seee eeee eeee (1.)mmmm … mmmm
 	// 1 bit sign, 11 bits exponent, 53 bits (52 stored) normalized mantissa
@@ -75,5 +78,29 @@ public abstract class Util {
 
 	public static double alignZero(double number) {
 		return getExp(number) < ACCURACY ? 0.0 : number;
+	}
+	
+	/**
+	 * Ruffles a double number between -1 and 1 but is not zero
+	 * @return a random notZero double 
+	 */
+	public static double getNotZeroRandom() {
+		double result = (rand.nextDouble() * 2d) - 1d;
+		while (isZero(result)) {
+			result = (rand.nextDouble() * 2d) - 1d;
+		}
+		return result;
+	}
+	
+	/**
+	 * Ruffles a double number between 0 and 1 but is not zero
+	 * @return a random double 
+	 */
+	public static double getNotZeroPositiveRandom() {
+		double result = rand.nextDouble();
+		while (isZero(result)) {
+			result = rand.nextDouble();
+		}
+		return result;
 	}
 }

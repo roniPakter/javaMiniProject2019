@@ -25,6 +25,8 @@ public class Material {
 		_kD = 0;
 		_kS = 0;
 		_nShininess = 0;
+		_kR = 0;
+		_kT = 0;
 	}
 	
 	/**
@@ -37,8 +39,25 @@ public class Material {
 		_kD = kD;
 		_kS = kS;
 		_nShininess = nShininess;
+		_kR = 0;
+		_kT = 0;
 	}
 	
+	/**
+	 * Constructor for material with parameters for reflection and refraction
+	 * @param kD - diffusive factor
+	 * @param kS - specular reflection factor
+	 * @param nShininess - shininess factor as integer
+	 * @param kR - reflection factor
+	 * @param kT - transparency factor
+	 */
+	public Material(double kD, double kS, int nShininess, double kR, double kT) {
+		_kD = kD;
+		_kS = kS;
+		_nShininess = nShininess;
+		_kR = kR;
+		_kT = kT;
+	}	
 //***************** Getters/Setters ******************** //
 	/**
 	 * get the diffusive factor of the material
@@ -61,10 +80,16 @@ public class Material {
 		return _nShininess;
 	}
 
+	/**
+	 * get the refraction factor of the material
+	 */
 	public double getKr() {
 		return _kR;
 	}
 
+	/**
+	 * get the transparency factor of the material
+	 */
 	public double getKt() {
 		return _kT;
 	}

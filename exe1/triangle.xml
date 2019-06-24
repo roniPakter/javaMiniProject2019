@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<triangle>
+	<aVertex>
+		<x>1</x>
+		<y>2</y>
+		<z>3</z>
+	</aVertex>
+	<bVertex>
+		<x>5</x>
+		<y>5</y>
+		<z>0</z>
+	</bVertex>
+	<cVertex>
+		<x>3</x>
+		<y>6</y>
+		<z>8</z>
+	</cVertex>
+</triangle>

@@ -10,6 +10,7 @@ package primitives;
 
 import static primitives.Util.*;
 
+
 /**
  * Representing a point in a Euclidean 3D space with the coordinates: (x,y,z)
  */

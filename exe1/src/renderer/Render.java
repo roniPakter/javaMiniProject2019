@@ -2,9 +2,8 @@ package renderer;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import elements.LightSource;
-import geometries.Intersectable;
+import elements.Pixel;
 import geometries.Intersectable.GeoPoint;
 import primitives.Color;
 import primitives.Point;
@@ -23,8 +22,20 @@ public class Render {
 	ImageWriter _imageWriter;
 	/** the scene holds all the data of the 3D model and the camera */
 	Scene _scene;
-	private static final double EPS = 1.0;
+	/** boolean flag for rendering with or without adaptive sampling */
+	boolean _adaptiveSampling;
+	private static final double EPS = 0.1;
 	private static final int MAX_CALC_COLOR_LEVEL = 10;
+	private static final int SAPLING_SUBDIVISION_LEVEL = 10;
+	int nX;
+	int nY;
+	double screenDistance;
+	double screenHeight;
+	double screenWidth;
+	double focusLength;
+	double apertureSize;
+	int rayBeamSize;
+	Color backgroundColor;
 
 	// ***************** Constructors ******************** //
 	/**
@@ -36,6 +47,44 @@ public class Render {
 	public Render(ImageWriter imageWriter, Scene scene) {
 		_imageWriter = imageWriter;
 		_scene = scene;
+		_adaptiveSampling = false;
+
+		// number of rows
+		nX = _imageWriter.getNx();
+		// number of columns
+		nY = _imageWriter.getNy();
+		screenDistance = _scene.getScreenDistance();
+		screenHeight = _imageWriter.getHeight();
+		screenWidth = _imageWriter.getWidth();
+		focusLength = _scene.getFocusLength();
+		apertureSize = _scene.getApertureSize();
+		rayBeamSize = _scene.getRayBeamSize();
+		backgroundColor = _scene.getColorBackground();
+	}
+
+	/**
+	 * constructor that gets the image writer and the scene objects and flag for
+	 * adaptive sampling
+	 * 
+	 * @param imageWriter
+	 * @param scene
+	 * @param adaptiveSampling - implementing supersampling adaptive or not
+	 */
+	public Render(ImageWriter imageWriter, Scene scene, boolean adaptiveSampling) {
+		_imageWriter = imageWriter;
+		_scene = scene;
+		_adaptiveSampling = adaptiveSampling;
+		// number of rows
+		nX = _imageWriter.getNx();
+		// number of columns
+		nY = _imageWriter.getNy();
+		screenDistance = _scene.getScreenDistance();
+		screenHeight = _imageWriter.getHeight();
+		screenWidth = _imageWriter.getWidth();
+		focusLength = _scene.getFocusLength();
+		apertureSize = _scene.getApertureSize();
+		rayBeamSize = _scene.getRayBeamSize();
+		backgroundColor = _scene.getColorBackground();
 	}
 
 	// ***************** Administrations ******************** //
@@ -54,41 +103,116 @@ public class Render {
 	 * color and write it
 	 */
 	public void renderImage() {
-		// number of rows
-		int nX = _imageWriter.getNx();
-		// number of columns
-		int nY = _imageWriter.getNy();
-		double screenDistance = _scene.getScreenDistance();
-		double screenHeight = _imageWriter.getHeight();
-		double screenWidth = _imageWriter.getWidth();
-		Color backgroundColor = _scene.getColorBackground();
-
 		for (int i = 0; i < nX; ++i) {
 			for (int j = 0; j < nY; ++j) {
-				// create the ray that goes through the center of the current pixel
-				Ray ray = _scene.getCamera().constructRayThroughPixel(nX, nY, j, i, screenDistance, screenWidth,
-						screenHeight);
-				// get all the intersection points of the ray with the model shapes
-				List<GeoPoint> intersectPoints = _scene.getGeometries().findIntersections(ray);
-				if (intersectPoints.isEmpty())
-					// in case there are no intersections - paint the background color
-					_imageWriter.writePixel(i, j, backgroundColor.getColor());
-				else {
-					// if there are intersections - find the closest point to the camera
-					GeoPoint closestPoint = getClosestPoint(intersectPoints, _scene.getCamera().getP0());
-					// paint the pixel with the matching color
-					_imageWriter.writePixel(i, j, calcColor(closestPoint, ray).getColor());
-				}
+				Color resultColor = _adaptiveSampling ? pixelColorByAdaptiveSampling(i, j)
+						: pixelColorByRegularSampling(i, j);
+				_imageWriter.writePixel(i, j, resultColor.getColor());
 			}
 		}
 	}
 
+	private Color pixelColorByRegularSampling(int i, int j) {
+		// create the rayBeam that goes through the current pixel
+		List<Ray> rayBeam = _scene.getCamera().constructRaysThroughPixel(nX, nY, j, i, screenDistance, focusLength,
+				apertureSize, screenWidth, screenHeight, rayBeamSize);
+		return calcRayBeamColor(rayBeam);
+	}
+
+	private Color pixelColorByAdaptiveSampling(int i, int j) {
+		Color resultColor = Color.BLACK;
+		Pixel pixel = _scene.getCamera().constructPixelCorners(nX, nY, j, i, screenDistance, focusLength, apertureSize,
+				screenWidth, screenHeight, rayBeamSize);
+		setPixelCornersColors(pixel);
+		if (isSameColor(pixel)) {
+			return resultColor.add(pixel.aCornerRays.color, pixel.bCornerRays.color, pixel.cCornerRays.color,
+					pixel.dCornerRays.color).reduce(4);
+		}
+		
+		List<Pixel> pixels = new ArrayList<Pixel>();
+		pixels.add(pixel);
+		for (int k = 0; k < pixels.size(); ++k) {
+			Pixel subPixel = pixels.get(k);
+			setPixelCornersColors(subPixel);
+			if (!isSameColor(subPixel) && subPixel.getRank() != 64)
+				pixels.addAll(_scene.getCamera().dividePixel(subPixel, focusLength, apertureSize, rayBeamSize));
+			else {
+				Color tmpColor = subPixel.aCornerRays.color.add(subPixel.bCornerRays.color, subPixel.cCornerRays.color,
+						subPixel.dCornerRays.color);
+				tmpColor = tmpColor.reduce(4);
+				resultColor = resultColor.add(tmpColor.reduce(subPixel.getRank()));
+			}
+		}
+		return resultColor;
+	}
+
+	private Color calcRayBeamColor(List<Ray> rayBeam) {
+		Color resultColor = Color.BLACK;
+		// for each ray in the beam - result color is the intersection color or
+		// background
+		for (Ray ray : rayBeam) {
+			GeoPoint closestPoint = findClosestIntersection(ray);
+			resultColor = resultColor.add(closestPoint == null ? backgroundColor : calcColor(closestPoint, ray));
+		}
+		// reduce the result color by 1/numOfRays
+		resultColor = resultColor.reduce(rayBeam.size());
+		return resultColor;
+	}
+
+	private void setPixelCornersColors(Pixel pixel) {
+		if (pixel.aCornerRays.color == null)
+			pixel.aCornerRays.setColor(calcRayBeamColor(pixel.aCornerRays.rayBeam));
+		if (pixel.bCornerRays.color == null)
+			pixel.bCornerRays.setColor(calcRayBeamColor(pixel.bCornerRays.rayBeam));
+		if (pixel.cCornerRays.color == null)
+			pixel.cCornerRays.setColor(calcRayBeamColor(pixel.cCornerRays.rayBeam));
+		if (pixel.dCornerRays.color == null)
+			pixel.dCornerRays.setColor(calcRayBeamColor(pixel.dCornerRays.rayBeam));
+
+	}
+
+	private boolean isSameColor(Pixel pixel) {
+		// check if any corner is different dramatically from it's neighbors
+		if (difference(pixel.aCornerRays.color, pixel.bCornerRays.color) > 0.3
+				|| difference(pixel.aCornerRays.color, pixel.dCornerRays.color) > 0.3)
+			return false;
+		if (difference(pixel.cCornerRays.color, pixel.bCornerRays.color) > 0.3
+				|| difference(pixel.cCornerRays.color, pixel.dCornerRays.color) > 0.3)
+			return false;
+		return true;
+	}
+
+	private double difference(Color color1, Color color2) {
+		double r = Math.abs(color1.getColor().getRed() - color2.getColor().getRed());
+		double g = Math.abs(color1.getColor().getGreen() - color2.getColor().getGreen());
+		double b = Math.abs(color1.getColor().getBlue() - color2.getColor().getBlue());
+		return r + g + b;
+	}
+
+	/**
+	 * calculates the color of a specific ray by the closest intersection point
+	 * 
+	 * @param closestPoint - the closest geoPoint intersected
+	 * @param ray          - the ray exits from the pixel
+	 * @return color value for the pixel
+	 */
 	private Color calcColor(GeoPoint closestPoint, Ray ray) {
+		// call the function with the parameters for the recursion
 		Color color = calcColor(closestPoint, ray, MAX_CALC_COLOR_LEVEL, 1.0);
+		// add the ambient light to the final calculated color
 		return color.add(_scene.getAmbientLight().getIntensity());
 	}
 
-	
+	/**
+	 * calculates the color of a point on the scene with recursion calls for
+	 * refraction & reflection
+	 * 
+	 * @param geoPoint
+	 * @param inRay    - the ray for the current call (starts with the original
+	 *                 pixel ray)
+	 * @param level    - the max number of calls the recursion should run
+	 * @return the color of the point without ambient
+	 */
 	private Color calcColor(GeoPoint geoPoint, Ray inRay, int level, double k) {
 		if (level == 0 || k < MIN_CALC_COLOR_K)
 			return Color.BLACK;
@@ -108,48 +232,77 @@ public class Render {
 			// l is the vector from the light to the point
 			Vector l = lightSource.getL(geoPoint.point);
 			if (n.dotProduct(l) * n.dotProduct(v) > 0) { // both are with the same sign
-				if (unshaded(l, n, geoPoint)) {
-					Color lightIntensity = lightSource.getIntensity(geoPoint.point);
+				double ktr = transparency(l, n, geoPoint);
+				if (!Util.isZero(ktr * k)) {
+					Color lightIntensity = lightSource.getIntensity(geoPoint.point).scale(ktr);
 					color = color.add(calcDiffusive(kd, n, l, lightIntensity),
 							calcSpecular(ks, l, n, v, nShininess, lightIntensity));
 				}
 			}
 		}
-
 		// Recursive call for a reflected ray
 		double kr = geoPoint.geometry.getMaterial().getKr();
 		Ray reflectedRay = constructReflectedRay(n, geoPoint.point, inRay);
+		// reflected point is null if there is no intersection
 		GeoPoint reflectedPoint = findClosestIntersection(reflectedRay);
-		if (reflectedPoint != null)
+		if (reflectedPoint != null && kr != 0)
+			// calculate the color of points the new rays hit
 			color = color.add(calcColor(reflectedPoint, reflectedRay, level - 1, k * kr).scale(kr));
 
 		// Recursive call for a refracted ray
 		double kt = geoPoint.geometry.getMaterial().getKt();
 		Ray refractedRay = constructRefractedRay(geoPoint.point, inRay);
+		// refracted point is null if there is no intersection
 		GeoPoint refractedPoint = findClosestIntersection(refractedRay);
-		if (refractedPoint != null)
+		if (refractedPoint != null && kt != 0)
+			// calculate the color of points the new rays hit
 			color = color.add(calcColor(refractedPoint, refractedRay, level - 1, k * kt)).scale(kt);
 		return color;
 	}
 
-	private Ray constructRefractedRay(Point point, Ray inRay) {
-		return new Ray(point, inRay.getVector());
+	/***
+	 * create the refracted ray from a ray hitting a point
+	 * 
+	 * @param point
+	 * @param ray   - hitting ray
+	 * @return a new ray refracted
+	 */
+	private Ray constructRefractedRay(Point point, Ray ray) {
+		return new Ray(point, ray.getVector());
 	}
 
-	private GeoPoint findClosestIntersection(Ray reflectedRay) {
-		Vector epsVector = reflectedRay.getVector().scale(EPS);
-		Ray ray = new Ray(reflectedRay.getBasePoint().addVector(epsVector), reflectedRay.getVector());
+	/**
+	 * get the closest point that is intersected by the ray
+	 * 
+	 * @param intersectingRay
+	 * @return the closest intersection geoPoint - if there isn't return null
+	 */
+	private GeoPoint findClosestIntersection(Ray intersectingRay) {
+		// check the intersection with a ray starts a bit out of the original ray
+		Vector epsVector = intersectingRay.getVector().scale(EPS);
+		Ray ray = new Ray(intersectingRay.getBasePoint().addVector(epsVector), intersectingRay.getVector());
+		// get all the intersection points
 		List<GeoPoint> intersectList = _scene.getGeometries().findIntersections(ray);
 		if (intersectList.isEmpty())
 			return null;
-		return getClosestPoint(intersectList, reflectedRay.getBasePoint());
-
+		return getClosestPoint(intersectList, intersectingRay.getBasePoint());
 	}
 
-	private Ray constructReflectedRay(Vector n, Point point, Ray inRay) {
-		if (Util.isZero(inRay.getVector().dotProduct(n)))
-			return new Ray(point, inRay.getVector());
-		return new Ray(point, inRay.getVector().substract(n.scale(2 * inRay.getVector().dotProduct(n))));
+	/**
+	 * create the reflected ray from a ray hitting a point
+	 * 
+	 * @param n          - the normal vector to the hited point
+	 * @param point
+	 * @param hittingRay
+	 * @return a new ray reflected by the ray in the point
+	 */
+	private Ray constructReflectedRay(Vector n, Point point, Ray hittingRay) {
+		// in case the hitting ray is parallel to the object in the point
+		if (Util.isZero(hittingRay.getVector().dotProduct(n)))
+			// the new ray is the same vector from the point
+			return new Ray(point, hittingRay.getVector());
+		// reflected = v -( 2 * (v * n )* n)
+		return new Ray(point, hittingRay.getVector().substract(n.scale(2 * hittingRay.getVector().dotProduct(n))));
 	}
 
 	/**
@@ -158,7 +311,8 @@ public class Render {
 	 * 
 	 * @param geopoints list
 	 * @param point     - a source point to check all points with
-	 * @return
+	 * 
+	 * @return closest geoPoint of the geoPoints list
 	 */
 	private GeoPoint getClosestPoint(List<GeoPoint> geoPoints, Point point) {
 		// P0 is the point of the camera position
@@ -172,15 +326,31 @@ public class Render {
 		return closest;
 	}
 
-	private boolean unshaded(Vector l, Vector n, GeoPoint geopoint) {
-
-		Vector lightDirection = l.scale(-1); // from point to light source
+	/**
+	 * return the value of light getting to a specific point, 1 if it is fully
+	 * lighted, 0 if it is shaded
+	 * 
+	 * @param l        - the vector from the light to the point
+	 * @param n        - the normal to the point
+	 * @param geopoint
+	 * @return 1: fully lighted, 0: fully shaded, values between are the strangth of
+	 *         the light
+	 */
+	private double transparency(Vector l, Vector n, GeoPoint geopoint) {
+		// from point to light source
+		Vector lightDirection = l.scale(-1);
+		// take the checking ray a bit out of the object
 		Vector epsVector = n.scale(n.dotProduct(lightDirection) > 0 ? EPS : -EPS);
 		Point point = geopoint.point.addVector(epsVector);
 
 		Ray lightRay = new Ray(point, lightDirection);
 		List<GeoPoint> intersections = _scene.getGeometries().findIntersections(lightRay);
-		return intersections.isEmpty();
+		// in case there are no objects shading - the ktr remains 1
+		double ktr = 1;
+		for (GeoPoint gp : intersections)
+			// every object shading adds the transparency level of it to the result
+			ktr *= gp.geometry.getMaterial().getKt();
+		return ktr;
 	}
 
 	/**
@@ -270,6 +440,9 @@ public class Render {
 		}
 	}
 
+	/**
+	 * write the rendered image of the scene
+	 */
 	public void writeToImage() {
 		_imageWriter.writeToImage();
 	}

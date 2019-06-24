@@ -3,6 +3,7 @@ package tests;
 import static org.junit.Assert.*;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -33,31 +34,31 @@ public class CameraTest {
 
 		// tests for a 4X4 view plane with size of 8X8
 		//pixel[0,0] center should be (-3,-3,2)
-		Ray actualRay = camera.constructRayThroughPixel(4, 4, 0, 0, 2, 8, 8);
-		assertEquals(new Ray(Point.ZERO, new Vector(-3, -3, 2)), actualRay);
+		List<Ray> actualRay = camera.constructRaysThroughPixel(4, 4, 0, 0, 2, 0,0, 8, 8,0);
+		assertTrue( actualRay.contains(new Ray(Point.ZERO, new Vector(-3, -3, 2))));
 		//pixel[0,1] center should be (-1,-3,2)
-		actualRay = camera.constructRayThroughPixel(4, 4, 0, 1, 2, 8, 8);
-		assertEquals(new Ray(Point.ZERO, new Vector(-1, -3, 2)), actualRay);
+		actualRay = camera.constructRaysThroughPixel(4, 4, 0, 1, 2,0,0, 8, 8,0);
+		assertTrue( actualRay.contains(new Ray(Point.ZERO, new Vector(-1, -3, 2))));
 		//pixel[1,0] center should be (-3,-1,2)
-		actualRay = camera.constructRayThroughPixel(4, 4, 1, 0, 2, 8, 8);
-		assertEquals(new Ray(Point.ZERO, new Vector(-3, -1, 2)), actualRay);
+		actualRay = camera.constructRaysThroughPixel(4, 4, 1, 0, 2,0,0, 8, 8,0);
+		assertTrue( actualRay.contains(new Ray(Point.ZERO, new Vector(-3, -1, 2))));
 		//pixel[1,1] center should be (-1,-1,2)
-		actualRay = camera.constructRayThroughPixel(4, 4, 1, 1, 2, 8, 8);
-		assertEquals(new Ray(Point.ZERO, new Vector(-1, -1, 2)), actualRay);
+		actualRay = camera.constructRaysThroughPixel(4, 4, 1, 1, 2,0,0, 8, 8,0);
+		assertTrue( actualRay.contains(new Ray(Point.ZERO, new Vector(-1, -1, 2))));
 
 		// tests for a 3X3 view plane with size of 6X6
 		//pixel[0,0] center should be (-2,-2,2)
-		actualRay = camera.constructRayThroughPixel(3, 3, 0, 0, 2, 6, 6);
-		assertEquals(new Ray(Point.ZERO, new Vector(-2, -2, 2)), actualRay);
+		actualRay = camera.constructRaysThroughPixel(3, 3, 0, 0, 2,0,0, 6, 6,0);
+		assertTrue( actualRay.contains(new Ray(Point.ZERO, new Vector(-2, -2, 2))));
 		//pixel[0,1] center should be (0,-2,2)
-		actualRay = camera.constructRayThroughPixel(3, 3, 0, 1, 2, 6, 6);
-		assertEquals(new Ray(Point.ZERO, new Vector(0, -2, 2)), actualRay);
+		actualRay = camera.constructRaysThroughPixel(3, 3, 0, 1, 2,0,0, 6, 6,0);
+		assertTrue( actualRay.contains(new Ray(Point.ZERO, new Vector(0, -2, 2))));
 		//pixel[1,0] center should be (-2,0,2)
-		actualRay = camera.constructRayThroughPixel(3, 3, 1, 0, 2, 6, 6);
-		assertEquals(new Ray(Point.ZERO, new Vector(-2, 0, 2)), actualRay);
+		actualRay = camera.constructRaysThroughPixel(3, 3, 1, 0, 2,0,0, 6, 6,0);
+		assertTrue( actualRay.contains(new Ray(Point.ZERO, new Vector(-2, 0, 2))));
 		//pixel[1,1] center should be (0,0,2)
-		actualRay = camera.constructRayThroughPixel(3, 3, 1, 1, 2, 6, 6);
-		assertEquals(new Ray(Point.ZERO, new Vector(0, 0, 2)), actualRay);
+		actualRay = camera.constructRaysThroughPixel(3, 3, 1, 1, 2,0,0, 6, 6,0);
+		assertTrue( actualRay.contains(new Ray(Point.ZERO, new Vector(0, 0, 2))));
 
 	}
 
@@ -107,7 +108,7 @@ public class CameraTest {
 		//for each pixel : find the intersections
 		for (int i = 0; i < nx; ++i) {
 			for (int j = 0; j < ny; ++j) {
-				Ray ray = camera.constructRayThroughPixel(nx, ny, i, j, screenDistance, screenWidth, screenHeight);
+				Ray ray = camera.constructRaysThroughPixel(nx, ny, i, j, screenDistance,0,0, screenWidth, screenHeight,0).get(0);
 				intersectionList.addAll(shape.findIntersections(ray));
 			}
 		}
