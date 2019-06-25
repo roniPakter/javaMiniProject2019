@@ -16,17 +16,16 @@ import scene.Scene;
  * test for the render class
  */
 public class RenderTest {
-	Scene scene = new Scene("Test scene");
-	ImageWriter imageWriter = new ImageWriter("test0ASS", 500, 500, 500, 500);
-	Render render = new Render(imageWriter, scene);
-	Camera camera = new Camera(new Point(0, 0, -2000), Vector.Z_AXIS, Vector.NEGATIVE_Y_AXIS);
+	
 	Material m = new Material(0.5, 0.8, 120);
 
 	/**
 	 * test the actual rendering of a colored image - sphere and four triangles
 	 */
 	@Test
-	public void basicRendering() {
+	public void basicRendering() throws InterruptedException {
+		Scene scene = new Scene("Test scene");
+		Camera camera = new Camera(new Point(0, 0, -2000), Vector.Z_AXIS, Vector.NEGATIVE_Y_AXIS);
 		scene.setCameraAndDistance(1200, camera);
 		scene.setBackground(Color.BLACK);
 		scene.setAmbientLight(new AmbientLight(new Color(100, 100, 100), 0.3));
@@ -54,6 +53,9 @@ public class RenderTest {
 
 		scene.setLights(new PointLight(new Color(255, 100, 100), new Point(-100, -70, 50), 1, 0.0000001, 0.0000005));
 
+
+		ImageWriter imageWriter = new ImageWriter("test0ASS", 500, 500, 500, 500);
+		Render render = new Render(imageWriter, scene,true);
 		render.renderImage();
 		// add a grid
 		render.printGrid(50, Color.WHITE);
@@ -63,7 +65,9 @@ public class RenderTest {
 	}
 
 	@Test
-	public void spotLightTest() {
+	public void spotLightTest() throws InterruptedException {
+		Scene scene = new Scene("Test scene");
+		Camera camera = new Camera(new Point(0, 0, -2000), Vector.Z_AXIS, Vector.NEGATIVE_Y_AXIS);
 		scene.setCameraAndDistance(600, camera);
 		scene.setBackground(Color.BLACK);
 		scene.setAmbientLight(new AmbientLight(new Color(100, 100, 100), 0.3));
@@ -85,7 +89,9 @@ public class RenderTest {
 	}
 
 	@Test
-	public void spotLightTestTriangles() {
+	public void spotLightTestTriangles() throws InterruptedException {
+		Scene scene = new Scene("Test scene");
+		Camera camera = new Camera(new Point(0, 0, -2000), Vector.Z_AXIS, Vector.NEGATIVE_Y_AXIS);
 		scene.setCameraAndDistance(200, camera);
 		scene.setBackground(Color.BLACK);
 		scene.setAmbientLight(new AmbientLight(new Color(100, 100, 100), 0.3));
@@ -104,7 +110,7 @@ public class RenderTest {
 
 		ImageWriter imageWriter = new ImageWriter("Spot test 2", 500, 500, 500, 500);
 
-		Render render = new Render(imageWriter, scene);
+		Render render = new Render(imageWriter, scene,true);
 
 		render.renderImage();
 		// write the final image
@@ -113,7 +119,9 @@ public class RenderTest {
 	}
 
 	@Test
-	public void directionalLightTestTriangles() {
+	public void directionalLightTestTriangles() throws InterruptedException {
+		Scene scene = new Scene("Test scene");
+		Camera camera = new Camera(new Point(0, 0, -2000), Vector.Z_AXIS, Vector.NEGATIVE_Y_AXIS);
 		scene.setCameraAndDistance(200, camera);
 		scene.setBackground(Color.BLACK);
 		scene.setAmbientLight(new AmbientLight(new Color(100, 100, 100), 0.3));
@@ -131,7 +139,7 @@ public class RenderTest {
 
 		ImageWriter imageWriter = new ImageWriter("Directional Light test 2", 500, 500, 500, 500);
 
-		Render render = new Render(imageWriter, scene);
+		Render render = new Render(imageWriter, scene,true);
 
 		render.renderImage();
 		// write the final image
@@ -140,7 +148,9 @@ public class RenderTest {
 	}
 
 	@Test
-	public void pointLightTestTriangles() {
+	public void pointLightTestTriangles() throws InterruptedException {
+		Scene scene = new Scene("Test scene");
+		Camera camera = new Camera(new Point(0, 0, -2000), Vector.Z_AXIS, Vector.NEGATIVE_Y_AXIS);
 		scene.setCameraAndDistance(200, camera);
 		scene.setBackground(Color.BLACK);
 		scene.setAmbientLight(new AmbientLight(new Color(100, 100, 100), 0.3));
@@ -158,7 +168,7 @@ public class RenderTest {
 
 		ImageWriter imageWriter = new ImageWriter("Point test 2SS", 500, 500, 500, 500);
 
-		Render render = new Render(imageWriter, scene);
+		Render render = new Render(imageWriter, scene, true);
 
 		render.renderImage();
 		// write the final image
@@ -167,7 +177,9 @@ public class RenderTest {
 	}
 	
 	@Test
-	public void shadowTestTrianglesAndSphere() {
+	public void shadowTestTrianglesAndSphere() throws InterruptedException {
+		Scene scene = new Scene("Test scene");
+		Camera camera = new Camera(new Point(0, 0, -2000), Vector.Z_AXIS, Vector.NEGATIVE_Y_AXIS);
 		scene.setCameraAndDistance(300, camera);
 		scene.setBackground(Color.BLACK);
 		scene.setAmbientLight(new AmbientLight(new Color(100, 100, 100), 0.3));
@@ -188,7 +200,7 @@ public class RenderTest {
 		scene.setLights(new PointLight(new Color(255, 100, 0), new Point(-100,-100,0), 1, 0.000001, 0.0000005));
 
 		ImageWriter imageWriter = new ImageWriter("shadow test - sphere above triangles", 500, 500, 500, 500);
-		Render render = new Render(imageWriter, scene);
+		Render render = new Render(imageWriter, scene,true);
 		render.renderImage();
 		// write the final image
 		render.writeToImage();
@@ -196,7 +208,9 @@ public class RenderTest {
 	}
 
 	@Test
-	public void sphereTritangleShadow() {
+	public void sphereTritangleShadow() throws InterruptedException {
+		Scene scene = new Scene("Test scene");
+		Camera camera = new Camera(new Point(0, 0, -2000), Vector.Z_AXIS, Vector.NEGATIVE_Y_AXIS);
 		scene.setCameraAndDistance(700, camera);
 		scene.setBackground(Color.BLACK);
 		scene.setAmbientLight(new AmbientLight(new Color(100, 100, 100), 0.3));
@@ -210,7 +224,7 @@ public class RenderTest {
 				0.00001, 0.000005));
 
 		ImageWriter imageWriter = new ImageWriter("sphere triangle shadowSS", 500, 500, 500, 500);
-		Render render = new Render(imageWriter, scene);
+		Render render = new Render(imageWriter, scene,true);
 		render.renderImage();
 		render.writeToImage();
 
@@ -221,7 +235,7 @@ public class RenderTest {
 		scene.setGeometries(triangle1, sphere);
 
 		imageWriter = new ImageWriter("sphere triangle shadow-triangleMove1SS", 500, 500, 500, 500);
-		render = new Render(imageWriter, scene);
+		render = new Render(imageWriter, scene,true);
 		render.renderImage();
 		render.writeToImage();
 
@@ -232,7 +246,7 @@ public class RenderTest {
 		scene.setGeometries(triangle2, sphere);
 
 		imageWriter = new ImageWriter("sphere triangle shadow-triangelMove2SS", 500, 500, 500, 500);
-		render = new Render(imageWriter, scene);
+		render = new Render(imageWriter, scene,true);
 		render.renderImage();
 		render.writeToImage();
 
@@ -243,7 +257,7 @@ public class RenderTest {
 
 		scene.setGeometries(triangle, sphere);
 		imageWriter = new ImageWriter("sphere triangle shadow-lightMove1SS", 500, 500, 500, 500);
-		render = new Render(imageWriter, scene);
+		render = new Render(imageWriter, scene,true);
 		render.renderImage();
 		render.writeToImage();
 
@@ -253,14 +267,16 @@ public class RenderTest {
 
 		scene.setGeometries(triangle, sphere);
 		imageWriter = new ImageWriter("sphere triangle shadow-lightMove2SS", 500, 500, 500, 500);
-		render = new Render(imageWriter, scene);
+		render = new Render(imageWriter, scene,true);
 		render.renderImage();
 		render.writeToImage();
 
 	}
 	
 	@Test
-	public void mirrorTestTriangleAndSphere() {	
+	public void mirrorTestTriangleAndSphere() throws InterruptedException {	
+		Scene scene = new Scene("Test scene");
+		Camera camera = new Camera(new Point(0, 0, -2000), Vector.Z_AXIS, Vector.NEGATIVE_Y_AXIS);
 		scene.setCameraAndDistance(600, camera);
 		scene.setBackground(Color.BLACK);
 		scene.setAmbientLight(new AmbientLight(new Color(100, 100, 100), 0.3));
@@ -282,7 +298,7 @@ public class RenderTest {
 		scene.setLights(new PointLight(new Color(255, 100, 100), new Point(-200,-200,-200), 1, 0.000001, 0.0000005));
 
 		ImageWriter imageWriter = new ImageWriter("mirror test - sphere against mirror blur", 500, 500, 500, 500);
-		Render render = new Render(imageWriter, scene);
+		Render render = new Render(imageWriter, scene,true);
 		render.renderImage();
 		// write the final image
 		render.writeToImage();
@@ -290,7 +306,9 @@ public class RenderTest {
 	}
 	
 	@Test
-	public void tranperancyTestSphereInSphere() {
+	public void tranperancyTestSphereInSphere() throws InterruptedException {
+		Scene scene = new Scene("Test scene");
+		Camera camera = new Camera(new Point(0, 0, -2000), Vector.Z_AXIS, Vector.NEGATIVE_Y_AXIS);
 		scene.setCameraAndDistance(500, camera);
 		scene.setBackground(Color.BLACK);
 		scene.setAmbientLight(new AmbientLight(new Color(100, 100, 100), 0.3));
@@ -301,7 +319,7 @@ public class RenderTest {
 		scene.setLights(new PointLight(new Color(255, 100, 100), new Point(-100,-100,0), 1, 0.000001, 0.0000005));
 
 		ImageWriter imageWriter = new ImageWriter("sphere within sphere", 500, 500, 500, 500);
-		Render render = new Render(imageWriter, scene);
+		Render render = new Render(imageWriter, scene,true);
 		render.renderImage();
 		// write the final image
 		render.writeToImage();
@@ -309,10 +327,12 @@ public class RenderTest {
 	}
 	
 	@Test
-	public void focusTestSphertesOnFloor() {
-		scene.setRayBeamSize(15);
-		scene.setApertureSize(26);
-		scene.setFocusLength(1800);
+	public void focusTestSphertesOnFloor() throws InterruptedException {
+		Camera camera = new Camera(new Point(0, 0, -2000), Vector.Z_AXIS, Vector.NEGATIVE_Y_AXIS);
+		Scene scene = new Scene("spheres-on-floor");
+		scene.setDofRayBeamSize(20);
+		scene.setApertureSize(0);
+		scene.setFocusLength(3400);
 		scene.setCameraAndDistance(600, camera);
 		scene.setBackground(Color.BLACK);
 		scene.setAmbientLight(new AmbientLight(new Color(100, 100, 100), 0.3));
@@ -326,7 +346,7 @@ public class RenderTest {
 		Sphere sphere5 = new Sphere(300, new Point(-900,500,2300), new Color(100,200,0), new Material(0.5, 0.8, 120));
 		Sphere sphere6 = new Sphere(300, new Point(800,500,2500), new Color(200,100,0), new Material(0.5, 0.8, 120));
 		Sphere sphere7 = new Sphere(300, new Point(1300,500,2800), new Color(200,0,100), new Material(0.5, 0.8, 120));
-		Sphere sphere8 = new Sphere(500, new Point(-1300,500,3900), new Color(60,90,170), new Material(0.5, 0.8, 120));
+		Sphere sphere8 = new Sphere(450, new Point(-1500,350,3900), new Color(60,90,170), new Material(0.5, 0.8, 120));
 		Sphere sphere9 = new Sphere(1000, new Point(-1300,-200,5800), new Color(60,70,70), mirrorMaterial);
 		Sphere sphere10 = new Sphere(1000, new Point(1100,-200,5990), new Color(60,190,220), m);
 		Sphere sphere11 = new Sphere(50, new Point(2100,750,4000), new Color(40,100,0), mirrorMaterial);
@@ -347,8 +367,8 @@ public class RenderTest {
 				new PointLight(new Color(255, 100, 100), new Point(0,-500,1200), 1, 0.000001, 0.0000005),
 				new PointLight(new Color(150, 200, 0), new Point(0,-1300,4200), 1, 0.000001, 0.0000005));
 
-		ImageWriter imageWriter = new ImageWriter("spheres focus test - close focusSS", 500, 500, 1000, 1000);
-		Render render = new Render(imageWriter, scene, true);
+		ImageWriter imageWriter = new ImageWriter("spheres integration test - not adaptive", 500, 500, 1000, 1000);
+		Render render = new Render(imageWriter, scene);
 		render.renderImage();
 		// write the final image
 		render.writeToImage();
@@ -362,5 +382,27 @@ public class RenderTest {
 //		render.writeToImage();
 	}
 	
-	
+	@Test
+	public void adaptiveSSTest() throws InterruptedException {
+		Camera camera = new Camera(new Point(0, 0, -2000), Vector.Z_AXIS, Vector.NEGATIVE_Y_AXIS);
+		Scene scene = new Scene("ASS-test");
+		scene.setCameraAndDistance(700, camera);
+		scene.setDofRayBeamSize(20);
+		scene.setApertureSize(35);
+		scene.setFocusLength(3700);
+		scene.setBackground(Color.BLACK);
+		scene.setAmbientLight(new AmbientLight(new Color(100, 100, 100), 0.3));
+
+		Sphere sphere = new Sphere(200, new Point(600,0,4500), new Color(0,0,200), new Material(0.4, 0.8, 120));
+		Sphere rightSphere = new Sphere(200, new Point(0,0,1800), new Color(200,0,0), new Material(0.5, 0.8, 120));
+		Sphere leftSphere = new Sphere(200, new Point(-300,0,0), new Color(0,200,0), new Material(0.5, 0.8, 120));
+		scene.addGeometries(rightSphere, leftSphere, sphere);
+		scene.addLights(new DirectionalLight(new Vector(0,-1,0), new Color(120,200,100)));
+		ImageWriter imageWriter = new ImageWriter("spheres SS with focus", 500, 500, 500, 500);
+		Render render = new Render(imageWriter, scene);
+		render.renderImage();
+		// write the final image
+		render.writeToImage();
+
+	}
 }

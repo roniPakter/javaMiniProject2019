@@ -30,7 +30,7 @@ public class Scene {
 	/**the size of the camera aperture - determines how blur the object not in focus would be (zero by default)*/
 	double _apertureSize;
 	/**the size of rayBeam - determines how smooth blur the object not in focus would be*/
-	int _rayBeamSize;
+	int _dofRayBeamSize;
 	// ***************** Constructors ********************** //
 	/**ctor for a scene with only scene name 
 	 * @param sceneName
@@ -120,8 +120,8 @@ public class Scene {
 	 * set the amount of ray generated for the blur of the unfocused objects
 	 * @param rayBeamSize 
 	 */
-	public void setRayBeamSize(int rayBeamSize) {
-		_rayBeamSize = rayBeamSize;
+	public void setDofRayBeamSize(int rayBeamSize) {
+		_dofRayBeamSize = rayBeamSize;
 	}
 
 	// ***************** Getters ********************** //
@@ -192,8 +192,8 @@ public class Scene {
 	 * 
 	 * @return the amount of rays for the unfocused blur
 	 */
-	public int getRayBeamSize() {
-		return _rayBeamSize;
+	public int getdofRayBeamSize() {
+		return _dofRayBeamSize;
 	}
 
 	// ***************** Administration ********************** //

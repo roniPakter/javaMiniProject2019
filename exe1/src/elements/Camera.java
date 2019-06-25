@@ -88,11 +88,11 @@ public class Camera {
 	 * @param apetureSize
 	 * @param screenWidth
 	 * @param screenHeight
-	 * @param rayBeamSize    - for the blur of the unfocused objects
+	 * @param dofRayBeamSize    - for the blur of the unfocused objects
 	 * @return a Ray beam from the camera through the center of the [i,j] pixel
 	 */
 	public List<Ray> constructRaysThroughPixel(int nx, int ny, int j, int i, double screenDistance, double focusLength,
-			double apertureSize, double screenWidth, double screenHeight, int rayBeamSize) {
+			double apertureSize, double screenWidth, double screenHeight, int dofRayBeamSize) {
 		// Pc is the center point of the view plane: P0 + d*vTo
 		Point pc = p0.addVector(vTo.scale(screenDistance));
 		// ratio factors: rx is the width of each pixel
@@ -117,26 +117,41 @@ public class Camera {
 		List<Ray> raysBeam = new ArrayList<Ray>();
 		double halfXRatio = rx / 2d;
 		double halfYRatio = ry / 2d;
-
+		//create 81 rays going from the P0 through the pixel in random points
 		for (int k = 0; k < 81; ++k) {
+			//go randomly on the pixel to the right and to the left
 			Vector shifterVector = vRight.scale(Util.getNotZeroRandom() * halfXRatio)
 					.add(vUp.scale(Util.getNotZeroRandom() * halfYRatio));
 			Point shiftedPixelPoint = pixelCenterPoint.addVector(shifterVector);
+			//add to the bem the DOF rays of the random point
 			raysBeam.addAll(
-					calcDOFRays(new Ray(p0, shiftedPixelPoint.subtract(p0)), focusLength, apertureSize, rayBeamSize));
+					calcDOFRays(new Ray(p0, shiftedPixelPoint.subtract(p0)), focusLength, apertureSize, dofRayBeamSize));
 		}
 		return raysBeam;
 	}
 
+	/**
+	 * create a pixel on the view plane - made of four corners rayBeams
+	 * @param nx             the number of columns
+	 * @param ny             the number of rows
+	 * @param i              the place of the pixel in rows
+	 * @param j              the pace of the pixel in columns
+	 * @param screenDistance
+	 * @param focusLength
+	 * @param apetureSize
+	 * @param screenWidth
+	 * @param screenHeight
+	 * @param dofRayBeamSize    - for the blur of the unfocused objects
+	 * @return a Pixel object uniting the corner rays
+	 */
 	public Pixel constructPixelCorners(int nx, int ny, int j, int i, double screenDistance, double focusLength,
-			double apertureSize, double screenWidth, double screenHeight, int rayBeamSize) {
+			double apertureSize, double screenWidth, double screenHeight, int dofRayBeamSize) {
 		// Pc is the center point of the view plane: P0 + d*vTo
 		Point pc = p0.addVector(vTo.scale(screenDistance));
 		// ratio factors: rx is the width of each pixel
 		double rx = screenWidth / nx;
 		double ry = screenHeight / ny;
-		// Xi and Yj are the coefficients that would take us to the asked point from the
-		// Pc point
+		// Xi and Yj are the coefficients that would take us to the asked point from the Pc point
 		// Xi for moving in the X axis direction (right / left)
 		double xi = ((i - (nx / 2d)) * rx);
 		// Yj for moving in the Y axis direction (down / up)
@@ -153,39 +168,51 @@ public class Camera {
 		Point upperRightPoint = upperLeftPoint.addVector(vRight.scale(rx));
 		Point lowerRightPoint = upperRightPoint.addVector(vUp.scale(ry));
 		Point lowerLeftPoint = upperLeftPoint.addVector(vUp.scale(ry));
-		// build for rays in the corners of the pixel
+		// build four rayBeams in the corners of the pixel A,B,C,D
 		List<Ray> aCorner = calcDOFRays(new Ray(p0, upperLeftPoint.subtract(p0)), focusLength, apertureSize,
-				rayBeamSize);
+				dofRayBeamSize);
 		List<Ray> bCorner = calcDOFRays(new Ray(p0, upperRightPoint.subtract(p0)), focusLength, apertureSize,
-				rayBeamSize);
+				dofRayBeamSize);
 		List<Ray> cCorner = calcDOFRays(new Ray(p0, lowerRightPoint.subtract(p0)), focusLength, apertureSize,
-				rayBeamSize);
+				dofRayBeamSize);
 		List<Ray> dCorner = calcDOFRays(new Ray(p0, lowerLeftPoint.subtract(p0)), focusLength, apertureSize,
-				rayBeamSize);
-
+				dofRayBeamSize);
+		//create the desired pixel - Hallelujah!
 		Pixel pixel = new Pixel(upperLeftPoint, aCorner, upperRightPoint, bCorner, lowerRightPoint, cCorner,
 				lowerLeftPoint, dCorner, 1);
 		return pixel;
 	}
 
-	public List<Pixel> dividePixel(Pixel mainPixel, double focusLength, double apertureSize, int rayBeamSize){
+	/**
+	 * divide a pixel on the view plane into four subpixels made of the corners and additional 5 rayBeams shot inside
+	 * @param mainPixel - the pixel to divide
+	 * @param focusLength
+	 * @param apertureSize
+	 * @param dofRayBeamSize
+	 * @return a list of the 4 new subPixels
+	 */
+	public List<Pixel> dividePixel(Pixel mainPixel, double focusLength, double apertureSize, int dofRayBeamSize){
 		//caculate the width and hight of the pixel
 		double pixWidth = mainPixel.aPoint.distance(mainPixel.bPoint);
 		double pixHeight = mainPixel.aPoint.distance(mainPixel.dPoint);
+		//save the vectors that shift a point half way to right and to down
 		Vector halfWidthRightShifter = vRight.scale(pixWidth / 2d);
 		Vector halfHeightDownShifter = vUp.scale(pixHeight / 2d);
+		//find the 5 new points on the pixel we will shoot rays from
 		Point abMiddlePoint = mainPixel.aPoint.addVector(halfWidthRightShifter);
 		Point dcMiddlePoint = mainPixel.dPoint.addVector(halfWidthRightShifter);
 		Point adMiddlePoint = mainPixel.aPoint.addVector(halfHeightDownShifter);
 		Point bcMiddlePoint = mainPixel.bPoint.addVector(halfHeightDownShifter);
 		Point pixCenterPoint = abMiddlePoint.addVector(halfHeightDownShifter);
 		
-		List<Ray> abMiddle = calcDOFRays(new Ray(p0, abMiddlePoint.subtract(p0)), focusLength, apertureSize, rayBeamSize);
-		List<Ray> dcMiddle = calcDOFRays(new Ray(p0, dcMiddlePoint.subtract(p0)), focusLength, apertureSize, rayBeamSize);
-		List<Ray> adMiddle = calcDOFRays(new Ray(p0, adMiddlePoint.subtract(p0)), focusLength, apertureSize, rayBeamSize);
-		List<Ray> bcMiddle = calcDOFRays(new Ray(p0, bcMiddlePoint.subtract(p0)), focusLength, apertureSize, rayBeamSize);
-		List<Ray> pixCenter = calcDOFRays(new Ray(p0, pixCenterPoint.subtract(p0)), focusLength, apertureSize, rayBeamSize);
+		//make 5 ray beams by the points found
+		List<Ray> abMiddle = calcDOFRays(new Ray(p0, abMiddlePoint.subtract(p0)), focusLength, apertureSize, dofRayBeamSize);
+		List<Ray> dcMiddle = calcDOFRays(new Ray(p0, dcMiddlePoint.subtract(p0)), focusLength, apertureSize, dofRayBeamSize);
+		List<Ray> adMiddle = calcDOFRays(new Ray(p0, adMiddlePoint.subtract(p0)), focusLength, apertureSize, dofRayBeamSize);
+		List<Ray> bcMiddle = calcDOFRays(new Ray(p0, bcMiddlePoint.subtract(p0)), focusLength, apertureSize, dofRayBeamSize);
+		List<Ray> pixCenter = calcDOFRays(new Ray(p0, pixCenterPoint.subtract(p0)), focusLength, apertureSize, dofRayBeamSize);
 		
+		//the rank grows times 4
 		int subdivisionRank = mainPixel.getRank() * 4;
 		List<Pixel> subPixels = new ArrayList<Pixel>();
 		subPixels.add(new Pixel(mainPixel.aPoint, mainPixel.aCornerRays.rayBeam, abMiddlePoint, abMiddle, pixCenterPoint, pixCenter, adMiddlePoint, adMiddle,subdivisionRank));
@@ -195,9 +222,18 @@ public class Camera {
 		return subPixels;
 	}
 
-	private List<Ray> calcDOFRays(Ray originalRay, double focusLength, double apertureSize, int rayBeamSize) {
+	/**
+	 * help method for calculating the raybeam of the DOF model for a specific original ray
+	 * @param originalRay - the ray to be replaced by a beam of intesecting rays
+	 * @param focusLength
+	 * @param apertureSize
+	 * @param dofRayBeamSize
+	 * @return a list of the rays for the focus calculation
+	 */
+	private List<Ray> calcDOFRays(Ray originalRay, double focusLength, double apertureSize, int dofRayBeamSize) {
 		List<Ray> raysBeam = new ArrayList<Ray>();
-		if (Util.isZero(apertureSize) || rayBeamSize == 0) {
+		//in case the aperture is zero - no focus or unfocus is needed
+		if (Util.isZero(apertureSize) || dofRayBeamSize == 0) {
 			raysBeam.add(originalRay);
 			return raysBeam;
 		}
@@ -212,9 +248,10 @@ public class Camera {
 		// create rays randomly within the range of the aperture size, directed to the
 		// focal point
 		double halfAperture = apertureSize / 2d;
-		for (int count = 0; count < rayBeamSize; count++) {
+		for (int count = 0; count < dofRayBeamSize; count++) {
+			//shift the point of the ray stat randomly within the range of the aperture size
 			Point shiftedPoint = basePoint.addVector(vRight.scale(Util.getNotZeroRandom() * halfAperture));
-			shiftedPoint = basePoint.addVector(vUp.scale(Util.getNotZeroRandom() * halfAperture));
+			shiftedPoint = shiftedPoint.addVector(vUp.scale(Util.getNotZeroRandom() * halfAperture));
 			Ray ray = new Ray(shiftedPoint, focalPoint.subtract(shiftedPoint));
 			raysBeam.add(ray);
 		}

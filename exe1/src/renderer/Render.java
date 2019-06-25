@@ -2,6 +2,10 @@ package renderer;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+
 import elements.LightSource;
 import elements.Pixel;
 import geometries.Intersectable.GeoPoint;
@@ -24,18 +28,32 @@ public class Render {
 	Scene _scene;
 	/** boolean flag for rendering with or without adaptive sampling */
 	boolean _adaptiveSampling;
+	/** value for shifting ray */
 	private static final double EPS = 0.1;
+	/** the maximum amount of reflection rays calculated*/
 	private static final int MAX_CALC_COLOR_LEVEL = 10;
-	private static final int SAPLING_SUBDIVISION_LEVEL = 10;
+	/**threshold for color difference (the percentage is the value / 255) */
+	private static final double COLOR_DIFFERENCE_THRESHOLD = 20;
+	/** number of pixel rows in the picture*/
 	int nX;
+	/** number of pixel columns in the picture*/
 	int nY;
+	/** the distance of the view plane from the lens */
 	double screenDistance;
+	/** height of the view plane */
 	double screenHeight;
+	/** width of the view plane */
 	double screenWidth;
+	/** the focus length of the rendered scene*/
 	double focusLength;
+	/**size of aperture for focus calculation*/
 	double apertureSize;
-	int rayBeamSize;
+	/**amount of rays shot for dof calculating*/
+	int dofRayBeamSize;
+	/** the rendered scene background color */
 	Color backgroundColor;
+	/**the actual amount of processors in the computer */
+	int actualCores;
 
 	// ***************** Constructors ******************** //
 	/**
@@ -58,8 +76,10 @@ public class Render {
 		screenWidth = _imageWriter.getWidth();
 		focusLength = _scene.getFocusLength();
 		apertureSize = _scene.getApertureSize();
-		rayBeamSize = _scene.getRayBeamSize();
+		dofRayBeamSize = _scene.getdofRayBeamSize();
 		backgroundColor = _scene.getColorBackground();
+		//get the number of cores in the running machine
+		actualCores = Runtime.getRuntime().availableProcessors();
 	}
 
 	/**
@@ -83,8 +103,10 @@ public class Render {
 		screenWidth = _imageWriter.getWidth();
 		focusLength = _scene.getFocusLength();
 		apertureSize = _scene.getApertureSize();
-		rayBeamSize = _scene.getRayBeamSize();
+		dofRayBeamSize = _scene.getdofRayBeamSize();
 		backgroundColor = _scene.getColorBackground();
+		//get the number of cores in the running machine
+		actualCores = Runtime.getRuntime().availableProcessors();
 	}
 
 	// ***************** Administrations ******************** //
@@ -99,53 +121,90 @@ public class Render {
 	// ***************** Operations ******************** //
 
 	/**
-	 * the method writes an image of the scene, for every pixel we calculate the
-	 * color and write it
+	 * the method writes an image of the scene, for every pixel we calculate the color and write it in a separate thread
+	 * @throws InterruptedException 
 	 */
-	public void renderImage() {
+	public void renderImage() throws InterruptedException {
+		//create a thread pool sized by the number of processors
+		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(actualCores);
+		//for each [i,j] pixel
 		for (int i = 0; i < nX; ++i) {
 			for (int j = 0; j < nY; ++j) {
-				Color resultColor = _adaptiveSampling ? pixelColorByAdaptiveSampling(i, j)
-						: pixelColorByRegularSampling(i, j);
-				_imageWriter.writePixel(i, j, resultColor.getColor());
+				int x = i;
+				int y = j;
+				//define the calculation to do for every pixel in a single thread
+				Runnable runnable = () ->{
+				Color resultColor = _adaptiveSampling ? pixelColorByAdaptiveSampling(x, y)
+						: pixelColorByRegularSampling(x, y);
+				_imageWriter.writePixel(x, y, resultColor.getColor());
+				};
+				executor.execute(runnable);
 			}
 		}
+		//after all - finish the thread work
+		executor.shutdown();
+		executor.awaitTermination(550, TimeUnit.MINUTES);
 	}
 
+	/**
+	 * calculate the color of [i,j] pixel in the picture - superSampling not adaptive
+	 * @param i
+	 * @param j
+	 * @return the color to paint the pixel 
+	 */
 	private Color pixelColorByRegularSampling(int i, int j) {
 		// create the rayBeam that goes through the current pixel
 		List<Ray> rayBeam = _scene.getCamera().constructRaysThroughPixel(nX, nY, j, i, screenDistance, focusLength,
-				apertureSize, screenWidth, screenHeight, rayBeamSize);
+				apertureSize, screenWidth, screenHeight, dofRayBeamSize);
 		return calcRayBeamColor(rayBeam);
 	}
 
+	/**
+	 * calculate the color of [i,j] pixel in the picture - superSampling is adaptive
+	 * @param i
+	 * @param j
+	 * @return the color to paint the pixel 
+	 */
 	private Color pixelColorByAdaptiveSampling(int i, int j) {
 		Color resultColor = Color.BLACK;
+		//create the pixel that is calculated by the camera
 		Pixel pixel = _scene.getCamera().constructPixelCorners(nX, nY, j, i, screenDistance, focusLength, apertureSize,
-				screenWidth, screenHeight, rayBeamSize);
+				screenWidth, screenHeight, dofRayBeamSize);
+		//save the colors of the pixel corners
 		setPixelCornersColors(pixel);
+		//in case the colors of the corners are close enough - the result is the average of the corners colors
 		if (isSameColor(pixel)) {
 			return resultColor.add(pixel.aCornerRays.color, pixel.bCornerRays.color, pixel.cCornerRays.color,
 					pixel.dCornerRays.color).reduce(4);
 		}
 		
+		//in case the colors are different - divide the pixel and check the sub pixels
 		List<Pixel> pixels = new ArrayList<Pixel>();
 		pixels.add(pixel);
+		//every time sub pixels are added - the size of the list grows
 		for (int k = 0; k < pixels.size(); ++k) {
 			Pixel subPixel = pixels.get(k);
 			setPixelCornersColors(subPixel);
-			if (!isSameColor(subPixel) && subPixel.getRank() != 64)
-				pixels.addAll(_scene.getCamera().dividePixel(subPixel, focusLength, apertureSize, rayBeamSize));
+			//in case the colors of the sub pixel are different and it is not the last level of division - divide it
+			if (!isSameColor(subPixel) && subPixel.getRank() < 64)
+				pixels.addAll(_scene.getCamera().dividePixel(subPixel, focusLength, apertureSize, dofRayBeamSize));
+			//if colors are similar or the pixel is maximum divided - add the color part of the sub pixel
 			else {
 				Color tmpColor = subPixel.aCornerRays.color.add(subPixel.bCornerRays.color, subPixel.cCornerRays.color,
 						subPixel.dCornerRays.color);
 				tmpColor = tmpColor.reduce(4);
+				//the part contributed to the result is 1 / rank
 				resultColor = resultColor.add(tmpColor.reduce(subPixel.getRank()));
 			}
 		}
 		return resultColor;
 	}
 
+	/**
+	 * method calculates the average color of a rays beam
+	 * @param rayBeam - list of rays
+	 * @return the average color of the rays
+	 */
 	private Color calcRayBeamColor(List<Ray> rayBeam) {
 		Color resultColor = Color.BLACK;
 		// for each ray in the beam - result color is the intersection color or
@@ -159,33 +218,48 @@ public class Render {
 		return resultColor;
 	}
 
+	/**
+	 * calculate and save the color of a rayBeam in a pixel if it is not saved already
+	 * @param pixel
+	 */
 	private void setPixelCornersColors(Pixel pixel) {
+		//a corner that has not been checked for its color is null
 		if (pixel.aCornerRays.color == null)
-			pixel.aCornerRays.setColor(calcRayBeamColor(pixel.aCornerRays.rayBeam));
+			pixel.aCornerRays.color = (calcRayBeamColor(pixel.aCornerRays.rayBeam));
 		if (pixel.bCornerRays.color == null)
-			pixel.bCornerRays.setColor(calcRayBeamColor(pixel.bCornerRays.rayBeam));
+			pixel.bCornerRays.color = (calcRayBeamColor(pixel.bCornerRays.rayBeam));
 		if (pixel.cCornerRays.color == null)
-			pixel.cCornerRays.setColor(calcRayBeamColor(pixel.cCornerRays.rayBeam));
+			pixel.cCornerRays.color = (calcRayBeamColor(pixel.cCornerRays.rayBeam));
 		if (pixel.dCornerRays.color == null)
-			pixel.dCornerRays.setColor(calcRayBeamColor(pixel.dCornerRays.rayBeam));
+			pixel.dCornerRays.color = (calcRayBeamColor(pixel.dCornerRays.rayBeam));
 
 	}
 
+	/**
+	 * checks if corners colors of a pixel are close enough to be considered as the same color
+	 * @param pixel
+	 * @return boolean same or not
+	 */
 	private boolean isSameColor(Pixel pixel) {
 		// check if any corner is different dramatically from it's neighbors
-		if (difference(pixel.aCornerRays.color, pixel.bCornerRays.color) > 0.3
-				|| difference(pixel.aCornerRays.color, pixel.dCornerRays.color) > 0.3)
-			return false;
-		if (difference(pixel.cCornerRays.color, pixel.bCornerRays.color) > 0.3
-				|| difference(pixel.cCornerRays.color, pixel.dCornerRays.color) > 0.3)
-			return false;
-		return true;
+		return (difference(pixel.aCornerRays.color, pixel.bCornerRays.color) < COLOR_DIFFERENCE_THRESHOLD
+				&& difference(pixel.aCornerRays.color, pixel.dCornerRays.color) < COLOR_DIFFERENCE_THRESHOLD 
+				&& difference(pixel.cCornerRays.color, pixel.bCornerRays.color) < COLOR_DIFFERENCE_THRESHOLD
+				&& difference(pixel.cCornerRays.color, pixel.dCornerRays.color) < COLOR_DIFFERENCE_THRESHOLD);
 	}
 
+	/**
+	 * checks the difference between two colors and returns the difference value
+	 * @param color1
+	 * @param color2
+	 * @return difference value (called the delta in math)
+	 */
 	private double difference(Color color1, Color color2) {
+		//difference of color is (|R1 - R2| + |G1 - G2| + |B1 - B2|) / 255
 		double r = Math.abs(color1.getColor().getRed() - color2.getColor().getRed());
 		double g = Math.abs(color1.getColor().getGreen() - color2.getColor().getGreen());
 		double b = Math.abs(color1.getColor().getBlue() - color2.getColor().getBlue());
+		// the value is still related to 255 whole value, the threshold is the fragment of 255 
 		return r + g + b;
 	}
 

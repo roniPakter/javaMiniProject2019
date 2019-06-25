@@ -180,6 +180,18 @@ public class Color {
 		double b = _b / k;
 		return new Color(r, g, b);
 	}
+	/**
+	 * check if one color equals precisely to the other 
+	 */
+	@Override
+	public boolean equals(Object other) {
+		if (this == other)
+			return true;
+		if (other == null || !(other instanceof Color))
+			return false;
+		Color otherColor = (Color)other;
+		return _r == otherColor._r && _g == otherColor._g && _b == otherColor._b;	
+	}
 	
 	/**
 	 * string representation of the color
