@@ -331,7 +331,7 @@ public class RenderTest {
 		Camera camera = new Camera(new Point(0, 0, -2000), Vector.Z_AXIS, Vector.NEGATIVE_Y_AXIS);
 		Scene scene = new Scene("spheres-on-floor");
 		scene.setDofRayBeamSize(20);
-		scene.setApertureSize(0);
+		scene.setApertureSize(37);
 		scene.setFocusLength(3400);
 		scene.setCameraAndDistance(600, camera);
 		scene.setBackground(Color.BLACK);
@@ -367,8 +367,8 @@ public class RenderTest {
 				new PointLight(new Color(255, 100, 100), new Point(0,-500,1200), 1, 0.000001, 0.0000005),
 				new PointLight(new Color(150, 200, 0), new Point(0,-1300,4200), 1, 0.000001, 0.0000005));
 
-		ImageWriter imageWriter = new ImageWriter("spheres integration test - not adaptive", 500, 500, 1000, 1000);
-		Render render = new Render(imageWriter, scene);
+		ImageWriter imageWriter = new ImageWriter("spheres - beautyful", 500, 500, 2000, 2000);
+		Render render = new Render(imageWriter, scene,true);
 		render.renderImage();
 		// write the final image
 		render.writeToImage();

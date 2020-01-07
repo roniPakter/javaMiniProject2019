@@ -124,7 +124,7 @@ public class Render {
 	 * the method writes an image of the scene, for every pixel we calculate the color and write it in a separate thread
 	 * @throws InterruptedException 
 	 */
-	public void renderImage() throws InterruptedException {
+	public void renderImage() {
 		//create a thread pool sized by the number of processors
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(actualCores);
 		//for each [i,j] pixel
@@ -143,7 +143,9 @@ public class Render {
 		}
 		//after all - finish the thread work
 		executor.shutdown();
-		executor.awaitTermination(550, TimeUnit.MINUTES);
+		try {
+		while(!executor.awaitTermination(1, TimeUnit.HOURS));
+		} catch (InterruptedException e) {}
 	}
 
 	/**
